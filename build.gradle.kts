@@ -11,13 +11,14 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation("io.vlingo:vlingo-lattice:1.0.0")
 }
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "11.0"
+        kotlinOptions.jvmTarget = "11"
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "11.0"
+        kotlinOptions.jvmTarget = "11"
     }
 }
