@@ -13,6 +13,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
     implementation("io.vlingo:vlingo-lattice:1.0.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
 }
 
 tasks {
