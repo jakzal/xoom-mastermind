@@ -1,2 +1,2 @@
-# vlingo-playground
+# Mastermind
 
