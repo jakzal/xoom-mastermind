@@ -58,9 +58,17 @@ class GameEntity(val id: GameId) : EventSourced(), Game {
     }
 
     override fun makeGuess(guess: Code) = when {
-        state.isGuessSuccessful(guess) -> apply(listOf(GuessMade(id, guess, giveFeedback(guess)), GameWon(id)))
-        state.hasLastMoveLeft() -> apply(listOf(GuessMade(id, guess, giveFeedback(guess)), GameLost(id)))
-        else -> apply(GuessMade(id, guess, giveFeedback(guess)))
+        state.isGuessSuccessful(guess) -> apply(
+            GuessMade(id, guess, giveFeedback(guess)),
+            GameWon(id)
+        )
+        state.hasLastMoveLeft() -> apply(
+            GuessMade(id, guess, giveFeedback(guess)),
+            GameLost(id)
+        )
+        else -> apply(
+            GuessMade(id, guess, giveFeedback(guess))
+        )
     }
 
     private fun giveFeedback(guess: Code): Feedback {
@@ -84,4 +92,6 @@ class GameEntity(val id: GameId) : EventSourced(), Game {
     }
 
     override fun streamName() = id.toString()
+
+    private fun apply(vararg events: GameEvent) = apply(events.toList())
 }
