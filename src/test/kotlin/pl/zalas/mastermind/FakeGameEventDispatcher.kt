@@ -17,16 +17,17 @@ class FakeGameEventDispatcher : Dispatcher<Dispatchable<Entry<String>, State<Str
     private val eventAdapter = DefaultTextEntryAdapter()
     private val events: MutableList<DomainEvent> = mutableListOf()
     private var control: DispatcherControl? = null
+    private val timeout: Long = 5000
 
     override fun controlWith(control: DispatcherControl) {
         this.control = control
     }
 
     override fun dispatch(dispatchable: Dispatchable<Entry<String>, State<String>>) {
-        dispatchable.entries().mapNotNull(::mapToGameEvent).apply {
-            events.addAll(this)
+        dispatchable.entries().mapNotNull(::mapToGameEvent).forEach {
+            events.add(it)
+            testUntil.happened()
         }
-        testUntil.happened()
         this.control?.confirmDispatched(dispatchable.id()) { _: Result, _: String -> }
     }
 
@@ -39,7 +40,7 @@ class FakeGameEventDispatcher : Dispatcher<Dispatchable<Entry<String>, State<Str
     }
 
     fun events(): List<DomainEvent> {
-        testUntil.completesWithin(2000)
+        testUntil.completesWithin(timeout)
         return events
     }
 
