@@ -24,3 +24,7 @@ tasks {
         kotlinOptions.jvmTarget = "11"
     }
 }
+
+tasks.test {
+    useJUnitPlatform()
+}
