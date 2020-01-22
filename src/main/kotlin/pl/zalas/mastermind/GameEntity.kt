@@ -41,9 +41,9 @@ class GameEntity(val id: GameId) : EventSourced(), Game {
     }
 
     override fun makeGuess(guess: Code) = when {
-        state.isGuessSuccessful(guess) -> apply(listOf(GuessMade(id, guess), GameWon(id)))
-        state.hasLastMoveLeft() -> apply(listOf(GuessMade(id, guess), GameLost(id)))
-        else -> apply(GuessMade(id, guess))
+        state.isGuessSuccessful(guess) -> apply(listOf(GuessMade(id, guess, Feedback()), GameWon(id)))
+        state.hasLastMoveLeft() -> apply(listOf(GuessMade(id, guess, Feedback()), GameLost(id)))
+        else -> apply(GuessMade(id, guess, Feedback()))
     }
 
     private fun applyGameStarted(gameStarted: GameStarted) {

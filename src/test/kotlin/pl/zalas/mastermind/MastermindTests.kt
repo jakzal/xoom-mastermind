@@ -49,8 +49,8 @@ class MastermindTests {
 
         shouldHaveRaisedEvents(
             GameStarted(gameId, secret, 12),
-            GuessMade(gameId, Code(RED, RED, RED, RED)),
-            GuessMade(gameId, Code(RED, BLUE, YELLOW, BLUE)),
+            GuessMade(gameId, Code(RED, RED, RED, RED), Feedback()),
+            GuessMade(gameId, Code(RED, BLUE, YELLOW, BLUE), Feedback()),
             GameWon(gameId)
         )
     }
@@ -63,12 +63,12 @@ class MastermindTests {
 
         gameBoard.startGame(secret, 2)
         gameBoard.makeGuess(Code(RED, RED, RED, RED))
-        gameBoard.makeGuess(Code(BLUE, BLUE, PURPLE, PURPLE))
+        gameBoard.makeGuess(Code(PURPLE, PURPLE, PURPLE, PURPLE))
 
         shouldHaveRaisedEvents(
             GameStarted(gameId, secret, 2),
-            GuessMade(gameId, Code(RED, RED, RED, RED)),
-            GuessMade(gameId, Code(BLUE, BLUE, PURPLE, PURPLE)),
+            GuessMade(gameId, Code(RED, RED, RED, RED), Feedback()),
+            GuessMade(gameId, Code(PURPLE, PURPLE, PURPLE, PURPLE), Feedback()),
             GameLost(gameId)
         )
     }
