@@ -18,7 +18,7 @@ import pl.zalas.mastermind.Feedback.Pin.EXACT_HIT
 import pl.zalas.mastermind.GameEvent.*
 import java.util.stream.Stream
 
-class MastermindTests {
+class GameTests {
 
     private lateinit var world: World
 
