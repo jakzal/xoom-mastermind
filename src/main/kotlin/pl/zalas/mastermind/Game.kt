@@ -1,9 +1,7 @@
 package pl.zalas.mastermind
 
 interface Game {
-    interface Code
-
-    fun startGame(secret: Code)
+    fun startGame(secret: Code, moves: Int)
 
     fun makeGuess(guess: Code)
 }

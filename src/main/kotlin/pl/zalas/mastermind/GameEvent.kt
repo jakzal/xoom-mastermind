@@ -1,10 +1,12 @@
 package pl.zalas.mastermind
 
-import pl.zalas.mastermind.Game.Code
+import io.vlingo.lattice.model.DomainEvent
 
-sealed class GameEvent {
-    data class GameStarted(val gameId: GameId, val secret: Code) : GameEvent()
-    data class GuessMade(val gameId: GameId, val guess: Code) : GameEvent()
-    data class GameWon(val gameId: GameId) : GameEvent()
-    data class GameLost(val gameId: GameId) : GameEvent()
+sealed class GameEvent : DomainEvent() {
+    abstract val id: GameId
+
+    data class GameStarted(override val id: GameId, val secret: Code, val moves: Int) : GameEvent()
+    data class GuessMade(override val id: GameId, val guess: Code) : GameEvent()
+    data class GameWon(override val id: GameId) : GameEvent()
+    data class GameLost(override val id: GameId) : GameEvent()
 }
