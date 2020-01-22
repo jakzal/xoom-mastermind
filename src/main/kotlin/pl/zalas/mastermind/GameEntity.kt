@@ -22,8 +22,6 @@ class GameEntity(val id: GameId) : EventSourced(), Game {
 
         fun makeGuess(guess: Code): State = copy(guesses = guesses + listOf(guess))
 
-        fun isGuessSuccessful(guess: Code) = secret.pins == guess.pins
-
         fun hasLastMoveLeft() = guesses.size == moves - 1
     }
 
@@ -41,7 +39,7 @@ class GameEntity(val id: GameId) : EventSourced(), Game {
     }
 
     override fun makeGuess(guess: Code) = when {
-        state.isGuessSuccessful(guess) -> apply(
+        state.secret.matches(guess) -> apply(
             GuessMade(id, guess, Feedback.give(state.secret, guess)),
             GameWon(id)
         )

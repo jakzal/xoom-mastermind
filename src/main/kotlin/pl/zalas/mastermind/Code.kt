@@ -7,6 +7,8 @@ data class Code(val pins: List<Pin>) {
 
     constructor(vararg pins: Pin) : this(pins.asList())
 
+    fun matches(guess: Code) = pins == guess.pins
+
     fun exactHits(guess: Code) = pins
         .zip(guess.pins)
         .filter { it.first == it.second }
