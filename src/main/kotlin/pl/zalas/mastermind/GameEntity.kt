@@ -4,14 +4,14 @@ import io.vlingo.lattice.model.sourcing.EventSourced
 import io.vlingo.lattice.model.sourcing.EventSourced.registerConsumer
 import pl.zalas.mastermind.GameEvent.*
 
-class GameEntity(val id: GameId) : EventSourced(), Game {
+class GameEntity(id: GameId) : EventSourced(), Game {
     private var state: State = State.initial(id)
 
     data class State(
         val id: GameId,
         val secret: Code,
-        val moves: Int,
-        val guesses: List<Code>
+        private val moves: Int,
+        private val guesses: List<Code>
     ) {
 
         companion object {
@@ -35,20 +35,20 @@ class GameEntity(val id: GameId) : EventSourced(), Game {
     }
 
     override fun startGame(secret: Code, moves: Int) {
-        apply(GameStarted(id, secret, moves))
+        apply(GameStarted(state.id, secret, moves))
     }
 
     override fun makeGuess(guess: Code) = when {
         state.secret.matches(guess) -> apply(
-            GuessMade(id, guess, Feedback.give(state.secret, guess)),
-            GameWon(id)
+            GuessMade(state.id, guess, Feedback.give(state.secret, guess)),
+            GameWon(state.id)
         )
         state.hasLastMoveLeft() -> apply(
-            GuessMade(id, guess, Feedback.give(state.secret, guess)),
-            GameLost(id)
+            GuessMade(state.id, guess, Feedback.give(state.secret, guess)),
+            GameLost(state.id)
         )
         else -> apply(
-            GuessMade(id, guess, Feedback.give(state.secret, guess))
+            GuessMade(state.id, guess, Feedback.give(state.secret, guess))
         )
     }
 
@@ -66,7 +66,7 @@ class GameEntity(val id: GameId) : EventSourced(), Game {
     private fun applyGameLost(gameLost: GameLost) {
     }
 
-    override fun streamName() = id.toString()
+    override fun streamName() = state.id.toString()
 
     private fun apply(vararg events: GameEvent) = apply(events.toList())
 }
