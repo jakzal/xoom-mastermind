@@ -8,8 +8,8 @@ Accepted
 
 == Context
 
-The sole purpose of this project is to practice CQRS and Event Souring with the
-https://docs.vlingo.io/vlingo-lattice/entity-cqrs:vlingo/lattice library.
+The sole purpose of this project is to practice CQRS and Event Souring architecture patterns
+with the https://docs.vlingo.io/vlingo-lattice/entity-cqrs:vlingo/lattice library.
 
 == Decision
 
