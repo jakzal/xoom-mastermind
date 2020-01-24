@@ -1,11 +1,11 @@
 package pl.zalas.mastermind
 
-data class Code(val pegs: List<Peg>) {
-    enum class Peg {
+data class Code(val pegs: List<CodePeg>) {
+    enum class CodePeg {
         GREEN, BLUE, YELLOW, RED, PURPLE, ORANGE
     }
 
-    constructor(vararg pegs: Peg) : this(pegs.asList())
+    constructor(vararg pegs: CodePeg) : this(pegs.asList())
 
     fun matches(guess: Code) = pegs == guess.pegs
 
@@ -25,5 +25,5 @@ data class Code(val pegs: List<Peg>) {
 
     private fun diff(guess: Code) = pegs.zip(guess.pegs).filter { it.first != it.second }.unzip()
 
-    private fun List<Peg>.countPegs() = groupBy { peg -> peg }.mapValues { it.value.size }
+    private fun List<CodePeg>.countPegs() = groupBy { peg -> peg }.mapValues { it.value.size }
 }

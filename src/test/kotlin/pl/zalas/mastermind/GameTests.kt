@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import pl.zalas.mastermind.Code.Peg.*
-import pl.zalas.mastermind.Feedback.Peg.WHITE
-import pl.zalas.mastermind.Feedback.Peg.BLACK
+import pl.zalas.mastermind.Code.CodePeg.*
+import pl.zalas.mastermind.Feedback.KeyPeg.WHITE
+import pl.zalas.mastermind.Feedback.KeyPeg.BLACK
 import pl.zalas.mastermind.GameEvent.*
 import java.util.stream.Stream
 
