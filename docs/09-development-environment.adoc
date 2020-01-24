@@ -1,0 +1,5 @@
+= Development environment
+
+* Java 11
+* Docker >= 19.03
+* IntelliJ IDEA with Kotlin 1.3

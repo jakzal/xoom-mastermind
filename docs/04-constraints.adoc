@@ -1,0 +1,25 @@
+= Constraints
+
+== Time, budget, resources
+
+* since this is a pet project, there's no time, budget, nor resource constraints.
+
+== Approved technology lists
+
+* JVM/Kotlin
+* PostgreSQL
+* vlingo
+
+== Target deployment platform
+
+Anywhere that runs docker.
+
+Candidates:
+
+* DigitalOcean
+* GCP
+* AWS
+
+== Standard protocols
+
+* JSON based HTTP API
