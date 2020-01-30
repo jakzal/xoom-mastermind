@@ -7,7 +7,8 @@ import io.vlingo.common.Success
 import io.vlingo.lattice.model.DomainEvent
 import io.vlingo.lattice.model.sourcing.EventSourced
 import io.vlingo.lattice.model.sourcing.EventSourced.registerConsumer
-import pl.zalas.mastermind.Game.GameException.IncompleteCode
+import pl.zalas.mastermind.GameError.GameFinished
+import pl.zalas.mastermind.GameError.IncompleteCode
 import pl.zalas.mastermind.GameEvent.GameStarted
 import pl.zalas.mastermind.GameEvent.GuessMade
 
@@ -17,17 +18,21 @@ class GameEntity(id: GameId) : EventSourced(), Game {
     data class State(
         val id: GameId,
         val secret: Code,
+        val isGameFinished: Boolean,
         private val moves: Int,
         private val guesses: List<Code>
     ) {
 
         companion object {
-            fun initial(id: GameId) = State(id, Code(emptyList()), 0, emptyList())
+            fun initial(id: GameId) = State(id, Code(emptyList()), false, 0, emptyList())
         }
 
         fun start(secret: Code, moves: Int): State = copy(secret = secret, moves = moves)
 
-        fun makeGuess(guess: Code): State = copy(guesses = guesses + listOf(guess))
+        fun makeGuess(guess: Code, isGameFinished: Boolean): State = copy(
+            guesses = guesses + listOf(guess),
+            isGameFinished = isGameFinished
+        )
 
         fun hasLastMoveLeft() = guesses.size == moves - 1
     }
@@ -47,6 +52,9 @@ class GameEntity(id: GameId) : EventSourced(), Game {
         if (state.secret.pegs.size != guess.pegs.size) {
             return applyError(IncompleteCode(state.secret.pegs.size, guess.pegs.size))
         }
+        if (state.isGameFinished) {
+            return applyError(GameFinished())
+        }
         return giveFeedback(guess).run {
             applySuccess(GuessMade(state.id, guess, this), this)
         }
@@ -63,7 +71,7 @@ class GameEntity(id: GameId) : EventSourced(), Game {
     }
 
     private fun applyGuessMade(guessMade: GuessMade) {
-        state = state.makeGuess(guessMade.guess)
+        state = state.makeGuess(guessMade.guess, guessMade.feedback.isGameFinished())
     }
 
     private fun <E : Throwable, T> applyError(error: E): Completes<Outcome<E, T>> = apply(emptyList()) {

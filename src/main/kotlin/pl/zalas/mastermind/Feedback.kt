@@ -28,4 +28,6 @@ data class Feedback(val pegs: List<KeyPeg>, val outcome: Outcome) {
             return exactHits + colourHits
         }
     }
+
+    fun isGameFinished(): Boolean = outcome != Outcome.IN_PROGRESS
 }

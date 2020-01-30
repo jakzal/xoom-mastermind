@@ -114,8 +114,32 @@ class GameTests {
 
         gameBoard.startGame(Code(RED, RED, RED, RED), 12)
 
-        assertThrows<Game.GameException.IncompleteCode> {
+        assertThrows<GameError.IncompleteCode> {
             gameBoard.makeGuess(Code(RED, RED)).waitForException()
+        }
+    }
+
+    @Test
+    fun `error is returned if the game is already won`() {
+        val gameBoard = world.actorFor(Game::class.java, GameEntity::class.java, GameId.generate())
+
+        gameBoard.startGame(Code(RED, RED, RED, RED), 12)
+        gameBoard.makeGuess(Code(RED, RED, RED, RED))
+
+        assertThrows<GameError.GameFinished> {
+            gameBoard.makeGuess(Code(RED, RED, RED, RED)).waitForException()
+        }
+    }
+
+    @Test
+    fun `error is returned if the game is already lost`() {
+        val gameBoard = world.actorFor(Game::class.java, GameEntity::class.java, GameId.generate())
+
+        gameBoard.startGame(Code(RED, RED, RED, RED), 1)
+        gameBoard.makeGuess(Code(GREEN, GREEN, GREEN, GREEN))
+
+        assertThrows<GameError.GameFinished> {
+            gameBoard.makeGuess(Code(RED, RED, RED, RED)).waitForException()
         }
     }
 
