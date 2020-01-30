@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -102,8 +103,19 @@ class GameTests {
 
         gameBoard.startGame(secret, 12)
 
-        gameBoard.makeGuess(Code(RED, BLUE, YELLOW, BLUE)).waitAndThen {
+        gameBoard.makeGuess(Code(RED, BLUE, YELLOW, BLUE)).waitForFeedbackAndThen {
             assertEquals(Feedback.won(BLACK, BLACK, BLACK, BLACK), it)
+        }
+    }
+
+    @Test
+    fun `error is returned if the code is not the same length as the secret`() {
+        val gameBoard = world.actorFor(Game::class.java, GameEntity::class.java, GameId.generate())
+
+        gameBoard.startGame(Code(RED, RED, RED, RED), 12)
+
+        assertThrows<Game.GameException.IncompleteCode> {
+            gameBoard.makeGuess(Code(RED, RED)).waitForException()
         }
     }
 
@@ -134,7 +146,11 @@ class GameTests {
         )
     }
 
-    private fun Completes<FeedbackOutcome>.waitAndThen(verify: (Feedback) -> Unit) {
+    private fun Completes<FeedbackOutcome>.waitForFeedbackAndThen(verify: (Feedback) -> Unit) {
         await<FeedbackOutcome>(1000).andThen { verify(it) }
+    }
+
+    private fun Completes<FeedbackOutcome>.waitForException() {
+        await<FeedbackOutcome>(1000).otherwise { throw it }
     }
 }

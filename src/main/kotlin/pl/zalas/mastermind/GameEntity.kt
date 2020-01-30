@@ -1,8 +1,13 @@
 package pl.zalas.mastermind
 
+import io.vlingo.common.Completes
+import io.vlingo.common.Failure
+import io.vlingo.common.Outcome
 import io.vlingo.common.Success
+import io.vlingo.lattice.model.DomainEvent
 import io.vlingo.lattice.model.sourcing.EventSourced
 import io.vlingo.lattice.model.sourcing.EventSourced.registerConsumer
+import pl.zalas.mastermind.Game.GameException.IncompleteCode
 import pl.zalas.mastermind.GameEvent.GameStarted
 import pl.zalas.mastermind.GameEvent.GuessMade
 
@@ -39,9 +44,11 @@ class GameEntity(id: GameId) : EventSourced(), Game {
     }
 
     override fun makeGuess(guess: Code): CompletesWithFeedbackOutcome {
-        val feedback = giveFeedback(guess)
-        return apply(GuessMade(state.id, guess, feedback)) {
-            Success.of<Game.GameException, Feedback>(feedback)
+        if (state.secret.pegs.size != guess.pegs.size) {
+            return applyError(IncompleteCode(state.secret.pegs.size, guess.pegs.size))
+        }
+        return giveFeedback(guess).run {
+            applySuccess(GuessMade(state.id, guess, this), this)
         }
     }
 
@@ -57,6 +64,14 @@ class GameEntity(id: GameId) : EventSourced(), Game {
 
     private fun applyGuessMade(guessMade: GuessMade) {
         state = state.makeGuess(guessMade.guess)
+    }
+
+    private fun <E : Throwable, T> applyError(error: E): Completes<Outcome<E, T>> = apply(emptyList()) {
+        Failure.of<E, T>(error)
+    }
+
+    private fun <E : Throwable, T> applySuccess(event: DomainEvent, value: T): Completes<Outcome<E, T>> = apply(event) {
+        Success.of<E, T>(value)
     }
 
     override fun streamName() = state.id.toString()
