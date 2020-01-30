@@ -13,8 +13,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import pl.zalas.mastermind.Code.CodePeg.*
-import pl.zalas.mastermind.Feedback.KeyPeg.WHITE
 import pl.zalas.mastermind.Feedback.KeyPeg.BLACK
+import pl.zalas.mastermind.Feedback.KeyPeg.WHITE
 import pl.zalas.mastermind.GameEvent.*
 import java.util.stream.Stream
 
@@ -55,9 +55,8 @@ class GameTests {
 
         shouldHaveRaisedEvents(
             GameStarted(gameId, secret, 12),
-            GuessMade(gameId, Code(RED, RED, RED, RED), Feedback(BLACK)),
-            GuessMade(gameId, Code(RED, BLUE, YELLOW, BLUE), Feedback(BLACK, BLACK, BLACK, BLACK)),
-            GameWon(gameId)
+            GuessMade(gameId, Code(RED, RED, RED, RED), Feedback.inProgress(BLACK)),
+            GuessMade(gameId, Code(RED, BLUE, YELLOW, BLUE), Feedback.won(BLACK, BLACK, BLACK, BLACK))
         )
     }
 
@@ -73,9 +72,8 @@ class GameTests {
 
         shouldHaveRaisedEvents(
             GameStarted(gameId, secret, 2),
-            GuessMade(gameId, Code(RED, RED, RED, RED), Feedback(BLACK)),
-            GuessMade(gameId, Code(PURPLE, PURPLE, PURPLE, PURPLE), Feedback()),
-            GameLost(gameId)
+            GuessMade(gameId, Code(RED, RED, RED, RED), Feedback.inProgress(BLACK)),
+            GuessMade(gameId, Code(PURPLE, PURPLE, PURPLE, PURPLE), Feedback.lost())
         )
     }
 
@@ -102,18 +100,22 @@ class GameTests {
     companion object {
         @JvmStatic
         private fun provideFeedbackCases() = Stream.of(
-            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(PURPLE, PURPLE, PURPLE, PURPLE), Feedback()),
-            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(RED, PURPLE, PURPLE, PURPLE), Feedback(BLACK)),
-            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(RED, RED, RED, RED), Feedback(BLACK)),
-            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(PURPLE, BLUE, PURPLE, PURPLE), Feedback(BLACK)),
-            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(PURPLE, BLUE, PURPLE, BLUE), Feedback(BLACK, BLACK)),
-            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(RED, BLUE, YELLOW, PURPLE), Feedback(BLACK, BLACK, BLACK)),
-            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(PURPLE, RED, PURPLE, PURPLE), Feedback(WHITE)),
-            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(PURPLE, RED, RED, RED), Feedback(WHITE)),
-            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(RED, RED, PURPLE, PURPLE), Feedback(BLACK)),
-            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(BLUE, RED, BLUE, YELLOW), Feedback(WHITE, WHITE, WHITE, WHITE)),
-            Arguments.of(Code(RED, BLUE, RED, BLUE), Code(RED, RED, PURPLE, PURPLE), Feedback(BLACK, WHITE)),
-            Arguments.of(Code(RED, BLUE, RED, BLUE), Code(RED, RED, BLUE, BLUE), Feedback(BLACK, BLACK, WHITE, WHITE))
+            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(PURPLE, PURPLE, PURPLE, PURPLE), Feedback.inProgress()),
+            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(RED, PURPLE, PURPLE, PURPLE), Feedback.inProgress(BLACK)),
+            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(RED, RED, RED, RED), Feedback.inProgress(BLACK)),
+            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(PURPLE, BLUE, PURPLE, PURPLE), Feedback.inProgress(BLACK)),
+            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(PURPLE, BLUE, PURPLE, BLUE), Feedback.inProgress(BLACK, BLACK)),
+            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(RED, BLUE, YELLOW, PURPLE), Feedback.inProgress(BLACK, BLACK, BLACK)),
+            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(PURPLE, RED, PURPLE, PURPLE), Feedback.inProgress(WHITE)),
+            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(PURPLE, RED, RED, RED), Feedback.inProgress(WHITE)),
+            Arguments.of(Code(RED, BLUE, YELLOW, BLUE), Code(RED, RED, PURPLE, PURPLE), Feedback.inProgress(BLACK)),
+            Arguments.of(
+                Code(RED, BLUE, YELLOW, BLUE),
+                Code(BLUE, RED, BLUE, YELLOW),
+                Feedback.inProgress(WHITE, WHITE, WHITE, WHITE)
+            ),
+            Arguments.of(Code(RED, BLUE, RED, BLUE), Code(RED, RED, PURPLE, PURPLE), Feedback.inProgress(BLACK, WHITE)),
+            Arguments.of(Code(RED, BLUE, RED, BLUE), Code(RED, RED, BLUE, BLUE), Feedback.inProgress(BLACK, BLACK, WHITE, WHITE))
         )
     }
 }

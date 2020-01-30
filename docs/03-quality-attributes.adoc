@@ -28,8 +28,6 @@ Since this is a pet project the expectations below are mostly made up.
 * The following events must be recorded in the system audit log:
 ** Game started
 ** Move Made
-** Game Won
-** Game Lost
 
 == Fault tolerance and resilience
 

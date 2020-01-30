@@ -2,7 +2,8 @@ package pl.zalas.mastermind
 
 import io.vlingo.lattice.model.sourcing.EventSourced
 import io.vlingo.lattice.model.sourcing.EventSourced.registerConsumer
-import pl.zalas.mastermind.GameEvent.*
+import pl.zalas.mastermind.GameEvent.GameStarted
+import pl.zalas.mastermind.GameEvent.GuessMade
 
 class GameEntity(id: GameId) : EventSourced(), Game {
     private var state: State = State.initial(id)
@@ -29,8 +30,6 @@ class GameEntity(id: GameId) : EventSourced(), Game {
         init {
             registerConsumer(GameEntity::class.java, GameStarted::class.java, GameEntity::applyGameStarted)
             registerConsumer(GameEntity::class.java, GuessMade::class.java, GameEntity::applyGuessMade)
-            registerConsumer(GameEntity::class.java, GameWon::class.java, GameEntity::applyGameWon)
-            registerConsumer(GameEntity::class.java, GameLost::class.java, GameEntity::applyGameLost)
         }
     }
 
@@ -38,18 +37,14 @@ class GameEntity(id: GameId) : EventSourced(), Game {
         apply(GameStarted(state.id, secret, moves))
     }
 
-    override fun makeGuess(guess: Code) = when {
-        state.secret.matches(guess) -> apply(
-            GuessMade(state.id, guess, Feedback.give(state.secret, guess)),
-            GameWon(state.id)
-        )
-        state.hasLastMoveLeft() -> apply(
-            GuessMade(state.id, guess, Feedback.give(state.secret, guess)),
-            GameLost(state.id)
-        )
-        else -> apply(
-            GuessMade(state.id, guess, Feedback.give(state.secret, guess))
-        )
+    override fun makeGuess(guess: Code) {
+        apply(GuessMade(state.id, guess, giveFeedback(guess)))
+    }
+
+    private fun giveFeedback(guess: Code): Feedback = when {
+        state.secret.matches(guess) -> Feedback.won(state.secret, guess)
+        state.hasLastMoveLeft() -> Feedback.lost(state.secret, guess)
+        else -> Feedback.inProgress(state.secret, guess)
     }
 
     private fun applyGameStarted(gameStarted: GameStarted) {
@@ -60,13 +55,5 @@ class GameEntity(id: GameId) : EventSourced(), Game {
         state = state.makeGuess(guessMade.guess)
     }
 
-    private fun applyGameWon(gameWon: GameWon) {
-    }
-
-    private fun applyGameLost(gameLost: GameLost) {
-    }
-
     override fun streamName() = state.id.toString()
-
-    private fun apply(vararg events: GameEvent) = apply(events.toList())
 }

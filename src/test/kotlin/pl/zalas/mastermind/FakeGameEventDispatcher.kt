@@ -11,7 +11,6 @@ import io.vlingo.symbio.store.dispatch.Dispatcher
 import io.vlingo.symbio.store.dispatch.DispatcherControl
 import pl.zalas.mastermind.GameEvent.*
 
-
 class FakeGameEventDispatcher : Dispatcher<Dispatchable<Entry<String>, State<String>>> {
     private val testUntil = TestUntil.happenings(1)
     private val eventAdapter = DefaultTextEntryAdapter()
@@ -34,8 +33,6 @@ class FakeGameEventDispatcher : Dispatcher<Dispatchable<Entry<String>, State<Str
     private fun mapToGameEvent(entry: Entry<*>): GameEvent? = when (entry.typeName()) {
         GameStarted::class.java.name -> eventAdapter.fromEntry(entry) as? GameStarted
         GuessMade::class.java.name -> eventAdapter.fromEntry(entry) as? GuessMade
-        GameWon::class.java.name -> eventAdapter.fromEntry(entry) as? GameWon
-        GameLost::class.java.name -> eventAdapter.fromEntry(entry) as? GameLost
         else -> throw RuntimeException("Unexpected event type ${entry.typeName()}")
     }
 
