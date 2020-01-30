@@ -1,5 +1,6 @@
 package pl.zalas.mastermind
 
+import io.vlingo.common.Success
 import io.vlingo.lattice.model.sourcing.EventSourced
 import io.vlingo.lattice.model.sourcing.EventSourced.registerConsumer
 import pl.zalas.mastermind.GameEvent.GameStarted
@@ -37,8 +38,11 @@ class GameEntity(id: GameId) : EventSourced(), Game {
         apply(GameStarted(state.id, secret, moves))
     }
 
-    override fun makeGuess(guess: Code) {
-        apply(GuessMade(state.id, guess, giveFeedback(guess)))
+    override fun makeGuess(guess: Code): CompletesWithFeedbackOutcome {
+        val feedback = giveFeedback(guess)
+        return apply(GuessMade(state.id, guess, feedback)) {
+            Success.of<Game.GameException, Feedback>(feedback)
+        }
     }
 
     private fun giveFeedback(guess: Code): Feedback = when {

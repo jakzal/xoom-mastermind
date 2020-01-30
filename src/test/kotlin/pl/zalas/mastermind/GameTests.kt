@@ -1,6 +1,7 @@
 package pl.zalas.mastermind
 
 import io.vlingo.actors.World
+import io.vlingo.common.Completes
 import io.vlingo.lattice.model.sourcing.Sourced
 import io.vlingo.lattice.model.sourcing.SourcedTypeRegistry
 import io.vlingo.symbio.store.journal.Journal
@@ -15,7 +16,8 @@ import org.junit.jupiter.params.provider.MethodSource
 import pl.zalas.mastermind.Code.CodePeg.*
 import pl.zalas.mastermind.Feedback.KeyPeg.BLACK
 import pl.zalas.mastermind.Feedback.KeyPeg.WHITE
-import pl.zalas.mastermind.GameEvent.*
+import pl.zalas.mastermind.GameEvent.GameStarted
+import pl.zalas.mastermind.GameEvent.GuessMade
 import java.util.stream.Stream
 
 class GameTests {
@@ -92,6 +94,19 @@ class GameTests {
         )
     }
 
+    @Test
+    fun `feedback is given on the guess`() {
+        val gameId = GameId.generate()
+        val secret = Code(RED, BLUE, YELLOW, BLUE)
+        val gameBoard = world.actorFor(Game::class.java, GameEntity::class.java, gameId)
+
+        gameBoard.startGame(secret, 12)
+
+        gameBoard.makeGuess(Code(RED, BLUE, YELLOW, BLUE)).waitAndThen {
+            assertEquals(Feedback.won(BLACK, BLACK, BLACK, BLACK), it)
+        }
+    }
+
     private fun shouldHaveRaisedEvents(vararg events: GameEvent) {
         dispatcher.updateExpectedEventHappenings(events.size)
         assertEquals(events.toList(), dispatcher.events(), "Should have raised the following events")
@@ -117,5 +132,9 @@ class GameTests {
             Arguments.of(Code(RED, BLUE, RED, BLUE), Code(RED, RED, PURPLE, PURPLE), Feedback.inProgress(BLACK, WHITE)),
             Arguments.of(Code(RED, BLUE, RED, BLUE), Code(RED, RED, BLUE, BLUE), Feedback.inProgress(BLACK, BLACK, WHITE, WHITE))
         )
+    }
+
+    private fun Completes<FeedbackOutcome>.waitAndThen(verify: (Feedback) -> Unit) {
+        await<FeedbackOutcome>(1000).andThen { verify(it) }
     }
 }
