@@ -1,0 +1,13 @@
+= Software architecture
+
+== Container view
+
+The diagram below focuses on high level responsibilities and technology choices within the Mastermind system.
+
+image::images/mastermind-container-view.png[Container view]
+
+== Component view
+
+The diagram below drills into the Mastermind API container to illustrate its main components.
+
+image::images/mastermind-component-view.png[Component view]

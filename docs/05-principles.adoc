@@ -1,0 +1,5 @@
+= Principles
+
+* Follow test driven development
+* Favour automation over documentation
+* Have fun and learn

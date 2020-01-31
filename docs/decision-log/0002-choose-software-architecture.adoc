@@ -1,0 +1,21 @@
+= 2. Choose software architecture
+
+Date: 2020-01-23
+
+== Status
+
+Accepted
+
+== Context
+
+The sole purpose of this project is to practice CQRS and Event Souring architecture patterns
+with the https://docs.vlingo.io/vlingo-lattice/entity-cqrs:vlingo/lattice library.
+
+== Decision
+
+By definition this project has to use event sourcing.
+
+== Consequences
+
+Software architecture of the project will follow what vlingo's documentation and examples
+demonstrate. Decoupling from vlingo is not going to be the focus at this point.

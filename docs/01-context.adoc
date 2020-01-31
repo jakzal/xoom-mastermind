@@ -1,0 +1,5 @@
+= System Context
+
+The system context diagram below presents the Mastermind system in the context of users and other systems.
+
+image::images/mastermind-system-context.png[System context]

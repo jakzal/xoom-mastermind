@@ -1,0 +1,7 @@
+= Decision log
+
+This section lists all the significant architecture and technology choices.
+
+include::decision-log/0001-record-architecture-decisions.adoc[leveloffset=+1]
+include::decision-log/0002-choose-software-architecture.adoc[leveloffset=+1]
+include::decision-log/0003-choose-the-database-software.adoc[leveloffset=+1]

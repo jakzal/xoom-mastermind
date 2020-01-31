@@ -1,0 +1,13 @@
+= Code
+
+This section describes the significant implementation details of the Mastermind system.
+
+== Event Sourcing Implementation
+
+https://docs.vlingo.io/vlingo-lattice/entity-cqrs#sourced[`vlingo/lattice`] is used
+for implementation of event sourcing.
+
+Lattice is part of the vlingo/PLATFORM project. It's an Open Source platform that aims
+to simplify the creation of event-driven reactive architectures.
+
+More can be found on the platform's website: https://docs.vlingo.io.

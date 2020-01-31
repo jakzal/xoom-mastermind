@@ -1,0 +1,10 @@
+= Functional Overview
+
+The Mastermind software is a single player code-breaking game.
+This is different to the classic Mastermind which is a two player game.
+In the digitalised version the CodeMaker player is replaced by the system.
+
+In the game of Mastermind, the CodeBreaker has the capability to:
+
+* *Start a new game* - a new secret code is randomly generated each time the game is started.
+* *Make a guess* - CodeBreaker has a number of attempts to break the code. Feedback is given on each attempt.
