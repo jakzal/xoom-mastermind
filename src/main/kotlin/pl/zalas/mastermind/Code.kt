@@ -1,11 +1,15 @@
 package pl.zalas.mastermind
 
 data class Code(val pegs: List<CodePeg>) {
+
     enum class CodePeg {
         GREEN, BLUE, YELLOW, RED, PURPLE, ORANGE
     }
 
     constructor(vararg pegs: CodePeg) : this(pegs.asList())
+
+    val size: Int
+        get() = pegs.size
 
     fun matches(guess: Code) = pegs == guess.pegs
 

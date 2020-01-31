@@ -49,8 +49,8 @@ class GameEntity(id: GameId) : EventSourced(), Game {
     }
 
     override fun makeGuess(guess: Code): CompletesWithFeedbackOutcome {
-        if (state.secret.pegs.size != guess.pegs.size) {
-            return applyError(IncompleteCode(state.secret.pegs.size, guess.pegs.size))
+        if (state.secret.size != guess.size) {
+            return applyError(IncompleteCode(state.secret.size, guess.size))
         }
         if (state.isGameFinished) {
             return applyError(GameFinished())
