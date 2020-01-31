@@ -48,15 +48,13 @@ class GameEntity(id: GameId) : EventSourced(), Game {
         apply(GameStarted(state.id, secret, moves))
     }
 
-    override fun makeGuess(guess: Code): CompletesWithFeedbackOutcome {
-        if (state.secret.size != guess.size) {
-            return applyError(IncompleteCode(state.secret.size, guess.size))
-        }
-        if (state.isGameFinished) {
-            return applyError(GameFinished())
-        }
-        return giveFeedback(guess).run {
-            applySuccess(GuessMade(state.id, guess, this), this)
+    override fun makeGuess(guess: Code): CompletesWithFeedbackOutcome = when {
+        state.isGameFinished ->
+            applyError(GameFinished())
+        state.secret.size != guess.size ->
+            applyError(IncompleteCode(state.secret.size, guess.size))
+        else -> giveFeedback(guess).andThen {
+            applySuccess<GameError, Feedback>(GuessMade(state.id, guess, this), this)
         }
     }
 
@@ -74,6 +72,8 @@ class GameEntity(id: GameId) : EventSourced(), Game {
         state = state.makeGuess(guessMade.guess, guessMade.feedback.isGameFinished())
     }
 
+    override fun streamName() = state.id.toString()
+
     private fun <E : Throwable, T> applyError(error: E): Completes<Outcome<E, T>> = apply(emptyList()) {
         Failure.of<E, T>(error)
     }
@@ -82,5 +82,5 @@ class GameEntity(id: GameId) : EventSourced(), Game {
         Success.of<E, T>(value)
     }
 
-    override fun streamName() = state.id.toString()
+    private inline fun <T, R> T.andThen(block: T.() -> R): R = block()
 }
