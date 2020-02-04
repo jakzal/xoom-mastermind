@@ -1,4 +1,4 @@
-package pl.zalas.mastermind
+package pl.zalas.mastermind.model
 
 data class Code(val pegs: List<CodePeg>) {
 

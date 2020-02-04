@@ -1,4 +1,4 @@
-package pl.zalas.mastermind
+package pl.zalas.mastermind.model
 
 data class Feedback(val pegs: List<KeyPeg>, val outcome: Outcome) {
     enum class KeyPeg {

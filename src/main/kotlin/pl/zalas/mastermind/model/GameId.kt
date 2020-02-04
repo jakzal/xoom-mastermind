@@ -1,4 +1,4 @@
-package pl.zalas.mastermind
+package pl.zalas.mastermind.model
 
 import java.util.*
 

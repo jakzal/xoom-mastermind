@@ -1,4 +1,4 @@
-package pl.zalas.mastermind
+package pl.zalas.mastermind.model
 
 sealed class GameError(message: String, cause: Throwable? = null) : Throwable(message, cause) {
 

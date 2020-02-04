@@ -1,4 +1,4 @@
-package pl.zalas.mastermind
+package pl.zalas.mastermind.model
 
 import io.vlingo.common.Completes
 import io.vlingo.common.Failure
@@ -7,10 +7,10 @@ import io.vlingo.common.Success
 import io.vlingo.lattice.model.DomainEvent
 import io.vlingo.lattice.model.sourcing.EventSourced
 import io.vlingo.lattice.model.sourcing.EventSourced.registerConsumer
-import pl.zalas.mastermind.GameError.GameFinished
-import pl.zalas.mastermind.GameError.IncompleteCode
-import pl.zalas.mastermind.GameEvent.GameStarted
-import pl.zalas.mastermind.GameEvent.GuessMade
+import pl.zalas.mastermind.model.GameError.GameFinished
+import pl.zalas.mastermind.model.GameError.IncompleteCode
+import pl.zalas.mastermind.model.GameEvent.GameStarted
+import pl.zalas.mastermind.model.GameEvent.GuessMade
 
 class GameEntity(id: GameId) : EventSourced(), Game {
     private var state: State = State.initial(id)

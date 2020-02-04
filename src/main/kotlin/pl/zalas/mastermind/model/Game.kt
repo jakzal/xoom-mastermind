@@ -1,4 +1,4 @@
-package pl.zalas.mastermind
+package pl.zalas.mastermind.model
 
 import io.vlingo.common.Completes
 import io.vlingo.common.Outcome
