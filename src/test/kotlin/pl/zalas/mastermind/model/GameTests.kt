@@ -19,6 +19,7 @@ import pl.zalas.mastermind.model.Feedback.KeyPeg.BLACK
 import pl.zalas.mastermind.model.Feedback.KeyPeg.WHITE
 import pl.zalas.mastermind.model.GameEvent.GameStarted
 import pl.zalas.mastermind.model.GameEvent.GuessMade
+import pl.zalas.mastermind.test.FakeGameEventDispatcher
 import java.util.stream.Stream
 
 class GameTests {

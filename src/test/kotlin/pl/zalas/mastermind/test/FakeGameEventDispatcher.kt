@@ -1,4 +1,4 @@
-package pl.zalas.mastermind.model
+package pl.zalas.mastermind.test
 
 import io.vlingo.actors.testkit.TestUntil
 import io.vlingo.lattice.model.DomainEvent
@@ -9,7 +9,9 @@ import io.vlingo.symbio.store.Result
 import io.vlingo.symbio.store.dispatch.Dispatchable
 import io.vlingo.symbio.store.dispatch.Dispatcher
 import io.vlingo.symbio.store.dispatch.DispatcherControl
-import pl.zalas.mastermind.model.GameEvent.*
+import pl.zalas.mastermind.model.GameEvent
+import pl.zalas.mastermind.model.GameEvent.GameStarted
+import pl.zalas.mastermind.model.GameEvent.GuessMade
 
 class FakeGameEventDispatcher : Dispatcher<Dispatchable<Entry<String>, State<String>>> {
     private val testUntil = TestUntil.happenings(1)
