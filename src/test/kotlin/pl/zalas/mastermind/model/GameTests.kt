@@ -33,6 +33,7 @@ class GameTests {
         world = World.startWithDefaults("mastermind")
         val journal = Journal.using(world.stage(), InMemoryJournalActor::class.java, dispatcher)
         val registry = SourcedTypeRegistry(world)
+        @Suppress("UNCHECKED_CAST")
         registry.register(
             SourcedTypeRegistry.Info(
                 journal,
