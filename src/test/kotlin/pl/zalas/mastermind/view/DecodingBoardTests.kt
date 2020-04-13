@@ -36,11 +36,12 @@ class DecodingBoardTests {
 
     private lateinit var store: StateStore
 
-    private val storeDispatcher = FakeStateStoreDispatcher<DomainEvent, State.TextState>()
+    private lateinit var storeDispatcher: FakeStateStoreDispatcher
 
     @BeforeEach
     fun startWorld() {
         world = World.startWithDefaults("mastermind")
+        storeDispatcher = FakeStateStoreDispatcher()
         store = createStateStore(world, storeDispatcher)
 
         createJournal(world, store)
@@ -63,15 +64,13 @@ class DecodingBoardTests {
             game.makeGuess(Code(BLUE, RED, GREEN, ORANGE))
         }
 
-        waitFor(decodingBoardQuery().getDecodingBoardForGame(gameId.toString())) { decodingBoard ->
-            assertEquals(
-                DecodingBoard(gameId.id, 12, listOf(
-                    Move(listOf("RED", "RED", "GREEN", "ORANGE"), listOf("BLACK")),
-                    Move(listOf("BLUE", "RED", "GREEN", "ORANGE"), listOf("WHITE", "WHITE"))
-                )),
-                decodingBoard
-            )
-        }
+        assertCompletesAs(
+            DecodingBoard(gameId.id, 12, listOf(
+                Move(listOf("RED", "RED", "GREEN", "ORANGE"), listOf("BLACK")),
+                Move(listOf("BLUE", "RED", "GREEN", "ORANGE"), listOf("WHITE", "WHITE"))
+            )),
+            decodingBoardQuery().getDecodingBoardForGame(gameId.toString())
+        )
     }
 
     private fun decodingBoardQuery() =
@@ -109,7 +108,7 @@ class DecodingBoardTests {
         return journal
     }
 
-    private fun createStateStore(world: World, dispatcher: Dispatcher<Dispatchable<Entry<DomainEvent>, State.TextState>>): StateStore {
+    private fun createStateStore(world: World, dispatcher: Dispatcher<Dispatchable<Entry<String>, State.TextState>>): StateStore {
         StateTypeStateStoreMap.stateTypeToStoreName(DecodingBoard::class.java, DecodingBoard::class.simpleName);
 
         val store = world.actorFor(StateStore::class.java, InMemoryStateStoreActor::class.java, listOf(dispatcher))
@@ -127,4 +126,10 @@ class DecodingBoardTests {
     }
 
     private fun <T> waitFor(completes: Completes<T>, block: (t: T) -> Unit) = block(completes.await())
+
+    private fun <T> assertCompletesAs(expected: T, completes: Completes<T>) {
+        waitFor(completes) {
+            assertEquals(it, expected)
+        }
+    }
 }

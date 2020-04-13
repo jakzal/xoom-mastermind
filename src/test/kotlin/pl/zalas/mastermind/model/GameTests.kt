@@ -26,11 +26,12 @@ class GameTests {
 
     private lateinit var world: World
 
-    private val dispatcher = FakeGameEventDispatcher()
+    private lateinit var dispatcher: FakeGameEventDispatcher
 
     @BeforeEach
     fun startWorld() {
         world = World.startWithDefaults("mastermind")
+        dispatcher = FakeGameEventDispatcher()
         val journal = Journal.using(world.stage(), InMemoryJournalActor::class.java, dispatcher)
         val registry = SourcedTypeRegistry(world)
         @Suppress("UNCHECKED_CAST")
@@ -54,15 +55,15 @@ class GameTests {
         val secret = Code(RED, BLUE, YELLOW, BLUE)
         val gameBoard = world.actorFor(Game::class.java, GameEntity::class.java, gameId)
 
-        gameBoard.startGame(secret, 12)
-        gameBoard.makeGuess(Code(RED, RED, RED, RED))
-        gameBoard.makeGuess(Code(RED, BLUE, YELLOW, BLUE))
-
-        shouldHaveRaisedEvents(
+        shouldRaiseEvents(
             GameStarted(gameId, secret, 12),
             GuessMade(gameId, Code(RED, RED, RED, RED), Feedback.inProgress(BLACK)),
             GuessMade(gameId, Code(RED, BLUE, YELLOW, BLUE), Feedback.won(BLACK, BLACK, BLACK, BLACK))
-        )
+        ) {
+            gameBoard.startGame(secret, 12)
+            gameBoard.makeGuess(Code(RED, RED, RED, RED))
+            gameBoard.makeGuess(Code(RED, BLUE, YELLOW, BLUE))
+        }
     }
 
     @Test
@@ -71,15 +72,15 @@ class GameTests {
         val secret = Code(RED, BLUE, YELLOW, BLUE)
         val gameBoard = world.actorFor(Game::class.java, GameEntity::class.java, gameId)
 
-        gameBoard.startGame(secret, 2)
-        gameBoard.makeGuess(Code(RED, RED, RED, RED))
-        gameBoard.makeGuess(Code(PURPLE, PURPLE, PURPLE, PURPLE))
-
-        shouldHaveRaisedEvents(
+        shouldRaiseEvents(
             GameStarted(gameId, secret, 2),
             GuessMade(gameId, Code(RED, RED, RED, RED), Feedback.inProgress(BLACK)),
             GuessMade(gameId, Code(PURPLE, PURPLE, PURPLE, PURPLE), Feedback.lost())
-        )
+        ) {
+            gameBoard.startGame(secret, 2)
+            gameBoard.makeGuess(Code(RED, RED, RED, RED))
+            gameBoard.makeGuess(Code(PURPLE, PURPLE, PURPLE, PURPLE))
+        }
     }
 
     @ParameterizedTest
@@ -88,13 +89,13 @@ class GameTests {
         val gameId = GameId.generate()
         val gameBoard = world.actorFor(Game::class.java, GameEntity::class.java, gameId)
 
-        gameBoard.startGame(secret, 12)
-        gameBoard.makeGuess(guess)
-
-        shouldHaveRaisedEvents(
+        shouldRaiseEvents(
             GameStarted(gameId, secret, 12),
             GuessMade(gameId, guess, expectedFeedback)
-        )
+        ) {
+            gameBoard.startGame(secret, 12)
+            gameBoard.makeGuess(guess)
+        }
     }
 
     @Test
@@ -143,11 +144,6 @@ class GameTests {
         assertThrows<GameError.GameFinished> {
             gameBoard.makeGuess(Code(RED, RED, RED, RED)).waitForException()
         }
-    }
-
-    private fun shouldHaveRaisedEvents(vararg events: GameEvent) {
-        dispatcher.updateExpectedEventHappenings(events.size)
-        assertEquals(events.toList(), dispatcher.events(), "Should have raised the following events")
     }
 
     companion object {
@@ -214,6 +210,12 @@ class GameTests {
                 Feedback.inProgress(BLACK, BLACK, WHITE, WHITE)
             )
         )
+    }
+
+    private fun shouldRaiseEvents(vararg events: GameEvent, block: () -> Unit) {
+        dispatcher.updateExpectedEventHappenings(events.size)
+        block()
+        assertEquals(events.toList(), dispatcher.events(), "Should have raised the following events")
     }
 
     private fun Completes<FeedbackOutcome>.waitForFeedbackAndThen(verify: (Feedback) -> Unit) {
