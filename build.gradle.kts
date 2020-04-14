@@ -1,7 +1,7 @@
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
 
 plugins {
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm") version "1.3.71"
     id("org.asciidoctor.jvm.convert") version "3.0.0"
 }
 
@@ -16,7 +16,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
-    implementation("io.vlingo:vlingo-lattice:1.1.0")
+    implementation("io.vlingo:vlingo-lattice:1.2.9")
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
 }
 

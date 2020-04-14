@@ -12,7 +12,7 @@ import pl.zalas.mastermind.model.GameError.IncompleteCode
 import pl.zalas.mastermind.model.GameEvent.GameStarted
 import pl.zalas.mastermind.model.GameEvent.GuessMade
 
-class GameEntity(id: GameId) : EventSourced(), Game {
+class GameEntity(id: GameId) : EventSourced(id.toString()), Game {
     private var state: State = State.initial(id)
 
     data class State(
@@ -71,8 +71,6 @@ class GameEntity(id: GameId) : EventSourced(), Game {
     private fun applyGuessMade(guessMade: GuessMade) {
         state = state.makeGuess(guessMade.guess, guessMade.feedback.isGameFinished())
     }
-
-    override fun streamName() = state.id.toString()
 
     private fun <E : Throwable, T> applyError(error: E): Completes<Outcome<E, T>> = apply(emptyList()) {
         Failure.of<E, T>(error)
