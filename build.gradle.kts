@@ -1,7 +1,7 @@
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
 
 plugins {
-    kotlin("jvm") version "1.3.71"
+    kotlin("jvm") version "1.3.72"
     id("org.asciidoctor.jvm.convert") version "3.0.0"
 }
 
