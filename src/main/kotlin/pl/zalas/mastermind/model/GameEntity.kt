@@ -44,8 +44,8 @@ class GameEntity(id: GameId) : EventSourced(id.toString()), Game {
         }
     }
 
-    override fun startGame(secret: Code, moves: Int) {
-        apply(GameStarted(state.id, secret, moves))
+    override fun startGame(codeMaker: CodeMaker, moves: Int) {
+        apply(GameStarted(state.id, codeMaker(), moves))
     }
 
     override fun makeGuess(guess: Code): CompletesWithFeedbackOutcome = when {
@@ -72,9 +72,8 @@ class GameEntity(id: GameId) : EventSourced(id.toString()), Game {
         state = state.makeGuess(guessMade.guess, guessMade.feedback.isGameFinished())
     }
 
-    private fun <E : Throwable, T> applyError(error: E): Completes<Outcome<E, T>> = apply(emptyList()) {
-        Failure.of<E, T>(error)
-    }
+    private fun <E : Throwable, T> applyError(error: E): Completes<Outcome<E, T>> =
+        completes<T>().with(Failure.of(error))
 
     private fun <E : Throwable, T> applySuccess(event: DomainEvent, value: T): Completes<Outcome<E, T>> = apply(event) {
         Success.of<E, T>(value)
