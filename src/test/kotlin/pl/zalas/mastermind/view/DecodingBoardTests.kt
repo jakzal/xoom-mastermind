@@ -69,7 +69,15 @@ class DecodingBoardTests {
                 Move(listOf("RED", "RED", "GREEN", "ORANGE"), listOf("BLACK")),
                 Move(listOf("BLUE", "RED", "GREEN", "ORANGE"), listOf("WHITE", "WHITE"))
             )),
-            decodingBoardQuery().getDecodingBoardForGame(gameId.toString())
+            decodingBoardQuery().findDecodingBoardForGame(gameId.toString())
+        )
+    }
+
+    @Test
+    fun `game state is not found if the game has not been started`() {
+        assertCompletesAs(
+            null,
+            decodingBoardQuery().findDecodingBoardForGame(GameId.generate().toString())
         )
     }
 
