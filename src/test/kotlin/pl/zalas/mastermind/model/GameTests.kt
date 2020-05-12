@@ -19,6 +19,7 @@ import pl.zalas.mastermind.model.Feedback.KeyPeg.BLACK
 import pl.zalas.mastermind.model.Feedback.KeyPeg.WHITE
 import pl.zalas.mastermind.model.GameEvent.GameStarted
 import pl.zalas.mastermind.model.GameEvent.GuessMade
+import pl.zalas.mastermind.test.FakeCodeMaker
 import pl.zalas.mastermind.test.FakeGameEventDispatcher
 import java.util.stream.Stream
 
@@ -60,7 +61,7 @@ class GameTests {
             GuessMade(gameId, Code(RED, RED, RED, RED), Feedback.inProgress(BLACK)),
             GuessMade(gameId, Code(RED, BLUE, YELLOW, BLUE), Feedback.won(BLACK, BLACK, BLACK, BLACK))
         ) {
-            gameBoard.startGame(secret, 12)
+            gameBoard.startGame(FakeCodeMaker(secret), 12)
             gameBoard.makeGuess(Code(RED, RED, RED, RED))
             gameBoard.makeGuess(Code(RED, BLUE, YELLOW, BLUE))
         }
@@ -77,7 +78,7 @@ class GameTests {
             GuessMade(gameId, Code(RED, RED, RED, RED), Feedback.inProgress(BLACK)),
             GuessMade(gameId, Code(PURPLE, PURPLE, PURPLE, PURPLE), Feedback.lost())
         ) {
-            gameBoard.startGame(secret, 2)
+            gameBoard.startGame(FakeCodeMaker(secret), 2)
             gameBoard.makeGuess(Code(RED, RED, RED, RED))
             gameBoard.makeGuess(Code(PURPLE, PURPLE, PURPLE, PURPLE))
         }
@@ -93,7 +94,7 @@ class GameTests {
             GameStarted(gameId, secret, 12),
             GuessMade(gameId, guess, expectedFeedback)
         ) {
-            gameBoard.startGame(secret, 12)
+            gameBoard.startGame(FakeCodeMaker(secret), 12)
             gameBoard.makeGuess(guess)
         }
     }
@@ -104,7 +105,7 @@ class GameTests {
         val secret = Code(RED, BLUE, YELLOW, BLUE)
         val gameBoard = world.actorFor(Game::class.java, GameEntity::class.java, gameId)
 
-        gameBoard.startGame(secret, 12)
+        gameBoard.startGame(FakeCodeMaker(secret), 12)
 
         gameBoard.makeGuess(Code(RED, BLUE, YELLOW, BLUE)).waitForFeedbackAndThen {
             assertEquals(Feedback.won(BLACK, BLACK, BLACK, BLACK), it)
@@ -115,7 +116,7 @@ class GameTests {
     fun `error is returned if the code is not the same length as the secret`() {
         val gameBoard = world.actorFor(Game::class.java, GameEntity::class.java, GameId.generate())
 
-        gameBoard.startGame(Code(RED, RED, RED, RED), 12)
+        gameBoard.startGame(FakeCodeMaker(Code(RED, RED, RED, RED)), 12)
 
         assertThrows<GameError.IncompleteCode> {
             gameBoard.makeGuess(Code(RED, RED)).waitForException()
@@ -126,7 +127,7 @@ class GameTests {
     fun `error is returned if the game is already won`() {
         val gameBoard = world.actorFor(Game::class.java, GameEntity::class.java, GameId.generate())
 
-        gameBoard.startGame(Code(RED, RED, RED, RED), 12)
+        gameBoard.startGame(FakeCodeMaker(Code(RED, RED, RED, RED)), 12)
         gameBoard.makeGuess(Code(RED, RED, RED, RED))
 
         assertThrows<GameError.GameFinished> {
@@ -138,7 +139,7 @@ class GameTests {
     fun `error is returned if the game is already lost`() {
         val gameBoard = world.actorFor(Game::class.java, GameEntity::class.java, GameId.generate())
 
-        gameBoard.startGame(Code(RED, RED, RED, RED), 1)
+        gameBoard.startGame(FakeCodeMaker(Code(RED, RED, RED, RED)), 1)
         gameBoard.makeGuess(Code(GREEN, GREEN, GREEN, GREEN))
 
         assertThrows<GameError.GameFinished> {

@@ -8,7 +8,7 @@ typealias CompletesWithFeedbackOutcome = Completes<FeedbackOutcome>
 
 interface Game {
 
-    fun startGame(secret: Code, moves: Int)
+    fun startGame(codeMaker: CodeMaker, moves: Int)
 
     fun makeGuess(guess: Code): CompletesWithFeedbackOutcome
 }

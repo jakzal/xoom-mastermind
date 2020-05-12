@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test
 import pl.zalas.mastermind.model.*
 import pl.zalas.mastermind.model.Code
 import pl.zalas.mastermind.model.Code.CodePeg.*
+import pl.zalas.mastermind.test.FakeCodeMaker
 import pl.zalas.mastermind.test.FakeStateStoreDispatcher
 import pl.zalas.mastermind.view.DecodingBoard.Move
 import java.util.*
@@ -59,7 +60,7 @@ class DecodingBoardTests {
         val game = world.actorFor(Game::class.java, GameEntity::class.java, gameId)
 
         waitForEvents(3) {
-            game.startGame(secret, 12)
+            game.startGame(FakeCodeMaker(secret), 12)
             game.makeGuess(Code(RED, RED, GREEN, ORANGE))
             game.makeGuess(Code(BLUE, RED, GREEN, ORANGE))
         }
