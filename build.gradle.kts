@@ -11,12 +11,16 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
+    jcenter()
+    maven { url = uri("https://oss.jfrog.org/oss-snapshot-local") }
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
-    implementation("io.vlingo:vlingo-lattice:1.2.9")
+    implementation("io.vlingo:vlingo-actors:1.2.20")
+    implementation("io.vlingo:vlingo-lattice:1.2.20")
+    implementation("io.vlingo:vlingo-symbio:1.2.20")
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
 }
 
