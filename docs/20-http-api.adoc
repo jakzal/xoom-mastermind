@@ -1,0 +1,113 @@
+= HTTP API
+
+== Game Resource
+
+=== Start a game
+
+.request
+```
+POST /games
+Accept: application/json
+```
+
+.response
+```
+HTTP/1.1 201 Created
+Content-Length: 49
+Content-Type: application/json
+Location: /games/b2ee7966-6c58-41ae-905c-11176bafe910
+
+{
+    "gameId": "b2ee7966-6c58-41ae-905c-11176bafe910"
+}
+```
+
+.example (httpie)
+```
+http POST http://localhost:8080/games
+```
+
+=== Make a guess
+
+.request
+```
+POST /games/b2ee7966-6c58-41ae-905c-11176bafe910
+Accept: application/json
+Content-Type: application/json
+
+{
+    "guess": ["RED", "GREEN", "BLUE", "YELLOW"]
+}
+```
+
+.response
+```
+HTTP/1.1 200 OK
+Content-Length: 103
+Content-Type: application/json
+
+{
+    "feedback": {
+        "outcome": "IN_PROGRESS",
+        "pegs": [
+            "WHITE"
+        ]
+    },
+    "gameId": "b2ee7966-6c58-41ae-905c-11176bafe910"
+}
+```
+
+.error response
+```
+HTTP/1.1 400 Bad Request
+Content-Length: 111
+Content-Type: application/json
+
+{
+    "error": "The code is 3 colours long but expected it to be 4.",
+    "gameId": "b2ee7966-6c58-41ae-905c-11176bafe910"
+}
+```
+
+.example (httpie)
+```
+http POST http://localhost:8080/games/b2ee7966-6c58-41ae-905c-11176bafe910 guess:='["RED", "GREEN", "BLUE", "YELLOW"]'
+```
+
+=== View a decoding board
+
+.request
+```
+GET /games/b2ee7966-6c58-41ae-905c-11176bafe910
+Accept: application/json
+```
+
+.response
+```
+HTTP/1.1 200 OK
+Content-Length: 136
+Content-Type: application/json
+
+{
+    "gameId": "b2ee7966-6c58-41ae-905c-11176bafe910",
+    "maxMoves": 12,
+    "moves": [
+        {
+            "feedback": [
+                "WHITE"
+            ],
+            "guess": [
+                "RED",
+                "GREEN",
+                "BLUE",
+                "YELLOW"
+            ]
+        }
+    ]
+}
+```
+
+.example (httpie)
+```
+http GET http://localhost:8080/games/b2ee7966-6c58-41ae-905c-11176bafe910
+```

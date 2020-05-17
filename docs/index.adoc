@@ -60,6 +60,8 @@ include::08-data.adoc[leveloffset=+1]
 
 include::09-development-environment.adoc[leveloffset=+1]
 
+include::20-http-api.adoc[leveloffset=+1]
+
 = Operation
 
 include::10-infrastructure-architecture.adoc[leveloffset=+1]

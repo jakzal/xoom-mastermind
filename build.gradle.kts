@@ -1,8 +1,10 @@
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
 
 plugins {
+    application
     kotlin("jvm") version "1.3.72"
     id("org.asciidoctor.jvm.convert") version "3.0.0"
+    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 group = "pl.zalas"
@@ -21,7 +23,18 @@ dependencies {
     implementation("io.vlingo:vlingo-actors:1.2.20")
     implementation("io.vlingo:vlingo-lattice:1.2.20")
     implementation("io.vlingo:vlingo-symbio:1.2.20")
+    implementation("io.vlingo:vlingo-symbio-jdbc:1.2.20")
+    implementation("io.vlingo:vlingo-http:1.2.20")
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
+    testImplementation("io.rest-assured:rest-assured:4.3.0")
+    testImplementation("io.rest-assured:kotlin-extensions:4.3.0")
+    testImplementation("org.testcontainers:testcontainers:1.14.1")
+    testImplementation("org.testcontainers:junit-jupiter:1.14.1")
+    testImplementation("org.testcontainers:postgresql:1.14.1")
+}
+
+application {
+    mainClassName = "pl.zalas.mastermind.infrastructure.http.Application"
 }
 
 tasks {
@@ -30,6 +43,9 @@ tasks {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "11"
+    }
+    shadowJar {
+        archiveClassifier.set("")
     }
 }
 

@@ -10,12 +10,18 @@ import io.vlingo.lattice.model.sourcing.Sourced
 import io.vlingo.lattice.model.sourcing.SourcedTypeRegistry
 import io.vlingo.symbio.Entry
 import io.vlingo.symbio.State
+import io.vlingo.symbio.store.DataFormat
+import io.vlingo.symbio.store.common.jdbc.Configuration
+import io.vlingo.symbio.store.common.jdbc.DatabaseType
+import io.vlingo.symbio.store.common.jdbc.postgres.PostgresConfigurationProvider
 import io.vlingo.symbio.store.dispatch.Dispatchable
 import io.vlingo.symbio.store.dispatch.Dispatcher
 import io.vlingo.symbio.store.journal.Journal
 import io.vlingo.symbio.store.journal.inmemory.InMemoryJournalActor
+import io.vlingo.symbio.store.journal.jdbc.JDBCJournalActor
 import io.vlingo.symbio.store.state.StateStore
 import pl.zalas.mastermind.infrastructure.factory.JournalFactory.JournalConfiguration.InMemoryConfiguration
+import pl.zalas.mastermind.infrastructure.factory.JournalFactory.JournalConfiguration.PostgreSQLConfiguration
 import pl.zalas.mastermind.model.GameEntity
 import pl.zalas.mastermind.model.GameEvent
 import pl.zalas.mastermind.view.DecodingBoardProjectionActor
@@ -24,6 +30,14 @@ import java.util.*
 class JournalFactory(private val stage: Stage, private val configuration: JournalConfiguration) {
     sealed class JournalConfiguration {
         object InMemoryConfiguration : JournalConfiguration()
+        data class PostgreSQLConfiguration(
+            val username: String,
+            val password: String,
+            val database: String,
+            val hostname: String = "[::1]",
+            val port: Int = 5432,
+            val useSsl: Boolean = false
+        ) : JournalConfiguration()
     }
 
     fun createJournal(store: StateStore): Journal<DomainEvent> {
@@ -51,6 +65,19 @@ class JournalFactory(private val stage: Stage, private val configuration: Journa
     fun createJournal(dispatcher: Dispatcher<Dispatchable<Entry<DomainEvent>, State.TextState>>): Journal<DomainEvent> {
         val journal = when(configuration) {
             is InMemoryConfiguration -> Journal.using(stage, InMemoryJournalActor::class.java, dispatcher)
+            is PostgreSQLConfiguration -> Journal.using(stage, JDBCJournalActor::class.java, dispatcher, Configuration(
+                DatabaseType.Postgres,
+                PostgresConfigurationProvider.interest,
+                org.postgresql.Driver::class.java.name,
+                DataFormat.Text,
+                "jdbc:postgresql://${configuration.hostname}:${configuration.port}/",
+                configuration.database,
+                configuration.username,
+                configuration.password,
+                configuration.useSsl,
+                "",
+                true
+            ))
         }
 
         val registry = SourcedTypeRegistry(stage.world())
