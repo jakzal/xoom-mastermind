@@ -2,10 +2,6 @@ package pl.zalas.mastermind.model
 
 import io.vlingo.actors.World
 import io.vlingo.common.Completes
-import io.vlingo.lattice.model.sourcing.Sourced
-import io.vlingo.lattice.model.sourcing.SourcedTypeRegistry
-import io.vlingo.symbio.store.journal.Journal
-import io.vlingo.symbio.store.journal.inmemory.InMemoryJournalActor
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -14,6 +10,8 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import pl.zalas.mastermind.infrastructure.factory.JournalFactory
+import pl.zalas.mastermind.infrastructure.factory.JournalFactory.JournalConfiguration.InMemoryConfiguration
 import pl.zalas.mastermind.model.Code.CodePeg.*
 import pl.zalas.mastermind.model.Feedback.KeyPeg.BLACK
 import pl.zalas.mastermind.model.Feedback.KeyPeg.WHITE
@@ -33,16 +31,7 @@ class GameTests {
     fun startWorld() {
         world = World.startWithDefaults("mastermind")
         dispatcher = FakeGameEventDispatcher()
-        val journal = Journal.using(world.stage(), InMemoryJournalActor::class.java, dispatcher)
-        val registry = SourcedTypeRegistry(world)
-        @Suppress("UNCHECKED_CAST")
-        registry.register(
-            SourcedTypeRegistry.Info(
-                journal,
-                GameEntity::class.java as Class<Sourced<String>>,
-                GameEntity::class.java.simpleName
-            )
-        )
+        JournalFactory(world.stage(), InMemoryConfiguration).createJournal(dispatcher)
     }
 
     @AfterEach

@@ -1,6 +1,7 @@
 package pl.zalas.mastermind.test
 
 import io.vlingo.actors.testkit.AccessSafely
+import io.vlingo.lattice.model.DomainEvent
 import io.vlingo.symbio.DefaultTextEntryAdapter
 import io.vlingo.symbio.Entry
 import io.vlingo.symbio.State
@@ -12,26 +13,26 @@ import pl.zalas.mastermind.model.GameEvent
 import pl.zalas.mastermind.model.GameEvent.GameStarted
 import pl.zalas.mastermind.model.GameEvent.GuessMade
 
-class FakeGameEventDispatcher : Dispatcher<Dispatchable<Entry<String>, State.TextState>> {
+class FakeGameEventDispatcher : Dispatcher<Dispatchable<Entry<DomainEvent>, State.TextState>> {
     private val eventAdapter = DefaultTextEntryAdapter()
-    private val entries: MutableList<Entry<String>> = mutableListOf()
+    private val entries: MutableList<Entry<DomainEvent>> = mutableListOf()
     private var control: DispatcherControl? = null
     private var access = AccessSafely.immediately()
-        .writingWith("registerEntry") { entry: Entry<String> -> entries.add(entry) }
+        .writingWith("registerEntry") { entry: Entry<DomainEvent> -> entries.add(entry) }
         .readingWith("entries") { -> entries.toList() }
 
     override fun controlWith(control: DispatcherControl) {
         this.control = control
     }
 
-    override fun dispatch(dispatchable: Dispatchable<Entry<String>, State.TextState>) {
+    override fun dispatch(dispatchable: Dispatchable<Entry<DomainEvent>, State.TextState>) {
         dispatchable.entries().forEach {
             access.writeUsing("registerEntry", it)
         }
         this.control?.confirmDispatched(dispatchable.id()) { _: Result, _: String -> }
     }
 
-    fun entries(): List<Entry<String>> = access.readFrom("entries")
+    fun entries(): List<Entry<DomainEvent>> = access.readFrom("entries")
 
     fun events(): List<GameEvent> = entries().mapNotNull(::mapToGameEvent)
 
@@ -39,7 +40,7 @@ class FakeGameEventDispatcher : Dispatcher<Dispatchable<Entry<String>, State.Tex
         access = access.resetAfterCompletingTo(times)
     }
 
-    private fun mapToGameEvent(entry: Entry<String>): GameEvent? = when (entry.typeName()) {
+    private fun mapToGameEvent(entry: Entry<DomainEvent>): GameEvent? = when (entry.typeName()) {
         GameStarted::class.java.name -> eventAdapter.fromEntry(entry) as? GameStarted
         GuessMade::class.java.name -> eventAdapter.fromEntry(entry) as? GuessMade
         else -> throw RuntimeException("Unexpected event type ${entry.typeName()}")
