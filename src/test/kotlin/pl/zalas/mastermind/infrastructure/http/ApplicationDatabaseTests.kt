@@ -44,14 +44,14 @@ class ApplicationDatabaseTests {
 
         app = Application(portNumber.getAndIncrement(), "classpath:postgresql.properties")
 
+        System.clearProperty("mastermind.journal.port")
+        System.clearProperty("mastermind.stateStore.port")
+
         assertTrue(app.serverStartup().await<Boolean>(100))
     }
 
     @AfterEach
     fun stopApplication() {
-        System.clearProperty("mastermind.journal.port")
-        System.clearProperty("mastermind.stateStore.port")
-
         app.stop()
     }
 
