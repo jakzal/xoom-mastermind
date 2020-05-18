@@ -1,4 +1,5 @@
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     application
@@ -49,8 +50,13 @@ tasks {
     }
 }
 
-tasks.test {
-    useJUnitPlatform()
+tasks {
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events = mutableSetOf(TestLogEvent.FAILED, TestLogEvent.SKIPPED, TestLogEvent.PASSED)
+        }
+    }
 }
 
 tasks {
