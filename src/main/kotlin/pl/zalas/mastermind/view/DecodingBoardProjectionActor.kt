@@ -57,13 +57,7 @@ class DecodingBoardProjectionActor(store: StateStore) : StateStoreProjectionActo
         }
     }
 
-    private fun mapToGameEvent(entry: Entry<*>): GameEvent? = when (entry.typeName()) {
-        GameStarted::class.java.name -> fromEntry(entry) as? GameStarted
-        GuessMade::class.java.name -> fromEntry(entry) as? GuessMade
-        else -> throw Exception("Unexpected type ${entry.typeName()}")
-    }
-
-    private fun fromEntry(entry: Entry<*>) = entryAdapter<GameEvent, Entry<*>>().fromEntry(entry)
+    private fun mapToGameEvent(entry: Entry<*>): GameEvent? = entryAdapter<GameEvent, Entry<*>>().fromEntry(entry)
 
     private fun createBoard(e: GameStarted) = DecodingBoard(e.id.toString(), e.moves, emptyList())
 
