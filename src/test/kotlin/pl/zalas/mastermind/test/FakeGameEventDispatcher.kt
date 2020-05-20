@@ -10,8 +10,6 @@ import io.vlingo.symbio.store.dispatch.Dispatchable
 import io.vlingo.symbio.store.dispatch.Dispatcher
 import io.vlingo.symbio.store.dispatch.DispatcherControl
 import pl.zalas.mastermind.model.GameEvent
-import pl.zalas.mastermind.model.GameEvent.GameStarted
-import pl.zalas.mastermind.model.GameEvent.GuessMade
 
 class FakeGameEventDispatcher : Dispatcher<Dispatchable<Entry<DomainEvent>, State.TextState>> {
     private val eventAdapter = DefaultTextEntryAdapter()
@@ -40,9 +38,5 @@ class FakeGameEventDispatcher : Dispatcher<Dispatchable<Entry<DomainEvent>, Stat
         access = access.resetAfterCompletingTo(times)
     }
 
-    private fun mapToGameEvent(entry: Entry<DomainEvent>): GameEvent? = when (entry.typeName()) {
-        GameStarted::class.java.name -> eventAdapter.fromEntry(entry) as? GameStarted
-        GuessMade::class.java.name -> eventAdapter.fromEntry(entry) as? GuessMade
-        else -> throw RuntimeException("Unexpected event type ${entry.typeName()}")
-    }
+    private fun mapToGameEvent(entry: Entry<DomainEvent>): GameEvent? = eventAdapter.fromEntry(entry) as? GameEvent
 }
