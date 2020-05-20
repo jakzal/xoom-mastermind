@@ -15,9 +15,6 @@ class DecodingBoardProjectionActor(store: StateStore) : StateStoreProjectionActo
 
     private var gameId: String = ""
 
-    class OutOfSequenceException(previous: Int, current: Int) :
-        RuntimeException("Out of sequence event received in projection ($previous -> $current).")
-
     override fun currentDataFor(projectable: Projectable): DecodingBoard = captureGameId {
         projectable.entries()
             .mapNotNull(::mapToGameEvent)
@@ -37,18 +34,14 @@ class DecodingBoardProjectionActor(store: StateStore) : StateStoreProjectionActo
         previousVersion: Int,
         currentData: DecodingBoard,
         currentVersion: Int
-    ): DecodingBoard {
-        if (isOutOfSequence(previousVersion, currentVersion)) {
-            throw OutOfSequenceException(previousVersion, currentVersion)
-        }
-        return when (previousData) {
-            is DecodingBoard -> DecodingBoard(previousData.gameId, previousData.maxMoves, previousData.moves + currentData.moves)
-            else -> currentData
-        }
+    ): DecodingBoard = when (previousData) {
+        is DecodingBoard -> DecodingBoard(
+            previousData.gameId,
+            previousData.maxMoves,
+            previousData.moves + currentData.moves
+        )
+        else -> currentData
     }
-
-    private fun isOutOfSequence(previousVersion: Int, currentVersion: Int) =
-        (previousVersion != -1 && currentVersion - previousVersion != 1) || (previousVersion == -1 && currentVersion != 1)
 
     private fun captureGameId(block: () -> DecodingBoard): DecodingBoard {
         gameId = ""
