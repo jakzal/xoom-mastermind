@@ -73,18 +73,18 @@ class GameResource(
                     }
                 )
             }
-            .otherwise { ObjectResponse.of(InternalServerError, null) }
+            .otherwise<Any> { ObjectResponse.of(InternalServerError, null) }
     }
 
     private fun viewGame(gameId: String): Completes<ObjectResponse<DecodingBoard?>> =
         decodingBoardQuery.findDecodingBoardForGame(gameId)
-            .andThenTo { board ->
+            .andThenTo(false) { board ->
                 when (board) {
                     is DecodingBoard -> withSuccess(ObjectResponse.of(Ok, board))
                     else -> withSuccess(ObjectResponse.of<DecodingBoard>(NotFound, null))
                 }
             }
-            .otherwise { ObjectResponse.of(InternalServerError, null) }
+            .otherwise<Boolean> { ObjectResponse.of(InternalServerError, null) }
 
     private fun newGame(gameId: GameId) = stage.actorFor(
         Game::class.java,
