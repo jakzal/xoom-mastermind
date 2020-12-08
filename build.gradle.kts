@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
     application
     kotlin("jvm") version "1.4.21"
-    id("org.asciidoctor.jvm.convert") version "3.0.0"
+    id("org.asciidoctor.jvm.convert") version "3.3.0"
     id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
