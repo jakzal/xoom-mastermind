@@ -26,7 +26,7 @@ dependencies {
     implementation("io.vlingo:vlingo-symbio:1.3.0")
     implementation("io.vlingo:vlingo-symbio-jdbc:1.3.0")
     implementation("io.vlingo:vlingo-http:1.3.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
     testImplementation("io.rest-assured:rest-assured:4.3.0")
     testImplementation("io.rest-assured:kotlin-extensions:4.3.0")
     testImplementation("org.testcontainers:testcontainers:1.15.0")
