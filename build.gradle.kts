@@ -29,9 +29,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testImplementation("io.rest-assured:rest-assured:4.3.0")
     testImplementation("io.rest-assured:kotlin-extensions:4.3.0")
-    testImplementation("org.testcontainers:testcontainers:1.14.1")
-    testImplementation("org.testcontainers:junit-jupiter:1.14.1")
-    testImplementation("org.testcontainers:postgresql:1.14.1")
+    testImplementation("org.testcontainers:testcontainers:1.15.0")
+    testImplementation("org.testcontainers:junit-jupiter:1.15.0")
+    testImplementation("org.testcontainers:postgresql:1.15.0")
 }
 
 application {
