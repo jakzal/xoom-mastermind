@@ -3,9 +3,9 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     application
-    kotlin("jvm") version "1.3.72"
-    id("org.asciidoctor.jvm.convert") version "3.0.0"
-    id("com.github.johnrengelman.shadow") version "5.2.0"
+    kotlin("jvm") version "1.4.21"
+    id("org.asciidoctor.jvm.convert") version "3.3.0"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 group = "pl.zalas"
@@ -26,12 +26,12 @@ dependencies {
     implementation("io.vlingo:vlingo-symbio:1.3.0")
     implementation("io.vlingo:vlingo-symbio-jdbc:1.3.0")
     implementation("io.vlingo:vlingo-http:1.3.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
-    testImplementation("io.rest-assured:rest-assured:4.3.0")
-    testImplementation("io.rest-assured:kotlin-extensions:4.3.0")
-    testImplementation("org.testcontainers:testcontainers:1.14.1")
-    testImplementation("org.testcontainers:junit-jupiter:1.14.1")
-    testImplementation("org.testcontainers:postgresql:1.14.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
+    testImplementation("io.rest-assured:rest-assured:4.3.2")
+    testImplementation("io.rest-assured:kotlin-extensions:4.3.2")
+    testImplementation("org.testcontainers:testcontainers:1.15.0")
+    testImplementation("org.testcontainers:junit-jupiter:1.15.0")
+    testImplementation("org.testcontainers:postgresql:1.15.0")
 }
 
 application {
