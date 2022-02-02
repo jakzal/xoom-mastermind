@@ -1,26 +1,27 @@
 package pl.zalas.mastermind.infrastructure.factory
 
-import io.vlingo.actors.Logger
-import io.vlingo.actors.Stage
-import io.vlingo.lattice.model.stateful.StatefulTypeRegistry
-import io.vlingo.symbio.Entry
-import io.vlingo.symbio.State
-import io.vlingo.symbio.store.DataFormat
-import io.vlingo.symbio.store.common.jdbc.Configuration
-import io.vlingo.symbio.store.common.jdbc.DatabaseType
-import io.vlingo.symbio.store.common.jdbc.postgres.PostgresConfigurationProvider
-import io.vlingo.symbio.store.dispatch.Dispatchable
-import io.vlingo.symbio.store.dispatch.Dispatcher
-import io.vlingo.symbio.store.dispatch.DispatcherControl
-import io.vlingo.symbio.store.dispatch.control.DispatcherControlActor
-import io.vlingo.symbio.store.journal.jdbc.JDBCDispatcherControlDelegate
-import io.vlingo.symbio.store.state.StateStore
-import io.vlingo.symbio.store.state.StateTypeStateStoreMap
-import io.vlingo.symbio.store.state.inmemory.InMemoryStateStoreActor
-import io.vlingo.symbio.store.state.jdbc.JDBCEntriesInstantWriter
-import io.vlingo.symbio.store.state.jdbc.JDBCStateStoreActor
-import io.vlingo.symbio.store.state.jdbc.JDBCStorageDelegate
-import io.vlingo.symbio.store.state.jdbc.postgres.PostgresStorageDelegate
+import io.vlingo.xoom.actors.Definition
+import io.vlingo.xoom.actors.Logger
+import io.vlingo.xoom.actors.Stage
+import io.vlingo.xoom.lattice.model.stateful.StatefulTypeRegistry
+import io.vlingo.xoom.symbio.Entry
+import io.vlingo.xoom.symbio.State
+import io.vlingo.xoom.symbio.store.DataFormat
+import io.vlingo.xoom.symbio.store.common.jdbc.Configuration
+import io.vlingo.xoom.symbio.store.common.jdbc.DatabaseType
+import io.vlingo.xoom.symbio.store.common.jdbc.postgres.PostgresConfigurationProvider
+import io.vlingo.xoom.symbio.store.dispatch.Dispatchable
+import io.vlingo.xoom.symbio.store.dispatch.Dispatcher
+import io.vlingo.xoom.symbio.store.dispatch.DispatcherControl
+import io.vlingo.xoom.symbio.store.dispatch.control.DispatcherControlActor
+import io.vlingo.xoom.symbio.store.journal.jdbc.JDBCDispatcherControlDelegate
+import io.vlingo.xoom.symbio.store.state.StateStore
+import io.vlingo.xoom.symbio.store.state.StateTypeStateStoreMap
+import io.vlingo.xoom.symbio.store.state.inmemory.InMemoryStateStoreActor
+import io.vlingo.xoom.symbio.store.state.jdbc.JDBCEntriesInstantWriter
+import io.vlingo.xoom.symbio.store.state.jdbc.JDBCStateStoreActor
+import io.vlingo.xoom.symbio.store.state.jdbc.JDBCStorageDelegate
+import io.vlingo.xoom.symbio.store.state.jdbc.postgres.PostgresStorageDelegate
 import pl.zalas.mastermind.infrastructure.factory.StateStoreFactory.StateStoreConfiguration.InMemoryConfiguration
 import pl.zalas.mastermind.infrastructure.factory.StateStoreFactory.StateStoreConfiguration.PostgreSQLConfiguration
 import pl.zalas.mastermind.view.DecodingBoard
@@ -87,14 +88,18 @@ class StateStoreFactory(
     }
 
     private fun dispatcherControl(
-        dispatcher: Dispatcher<*>,
+        dispatcher: Dispatcher<Dispatchable<out Entry<*>, out State<*>>>,
         configuration: Configuration
     ) = stage.actorFor(
         DispatcherControl::class.java,
-        DispatcherControlActor::class.java,
-        listOf(dispatcher),
-        JDBCDispatcherControlDelegate(Configuration.cloneOf(configuration), stage.world().defaultLogger()),
-        StateStore.DefaultCheckConfirmationExpirationInterval,
-        StateStore.DefaultConfirmationExpiration
+        Definition.has(
+            DispatcherControlActor::class.java,
+            DispatcherControl.DispatcherControlInstantiator<Entry<*>, State<*>>(
+                listOf(dispatcher),
+                JDBCDispatcherControlDelegate(Configuration.cloneOf(configuration), stage.world().defaultLogger()),
+                StateStore.DefaultCheckConfirmationExpirationInterval,
+                StateStore.DefaultConfirmationExpiration
+            )
+        )
     )
 }

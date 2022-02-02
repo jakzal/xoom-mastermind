@@ -1,14 +1,14 @@
 package pl.zalas.mastermind.test
 
-import io.vlingo.actors.testkit.AccessSafely
-import io.vlingo.lattice.model.DomainEvent
-import io.vlingo.symbio.DefaultTextEntryAdapter
-import io.vlingo.symbio.Entry
-import io.vlingo.symbio.State
-import io.vlingo.symbio.store.Result
-import io.vlingo.symbio.store.dispatch.Dispatchable
-import io.vlingo.symbio.store.dispatch.Dispatcher
-import io.vlingo.symbio.store.dispatch.DispatcherControl
+import io.vlingo.xoom.actors.testkit.AccessSafely
+import io.vlingo.xoom.lattice.model.DomainEvent
+import io.vlingo.xoom.symbio.DefaultTextEntryAdapter
+import io.vlingo.xoom.symbio.Entry
+import io.vlingo.xoom.symbio.State
+import io.vlingo.xoom.symbio.store.Result
+import io.vlingo.xoom.symbio.store.dispatch.Dispatchable
+import io.vlingo.xoom.symbio.store.dispatch.Dispatcher
+import io.vlingo.xoom.symbio.store.dispatch.DispatcherControl
 import pl.zalas.mastermind.model.GameEvent
 
 class FakeGameEventDispatcher : Dispatcher<Dispatchable<Entry<DomainEvent>, State.TextState>> {

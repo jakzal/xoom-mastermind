@@ -1,12 +1,12 @@
 package pl.zalas.mastermind.test
 
-import io.vlingo.actors.testkit.AccessSafely
-import io.vlingo.symbio.Entry
-import io.vlingo.symbio.State
-import io.vlingo.symbio.store.Result
-import io.vlingo.symbio.store.dispatch.Dispatchable
-import io.vlingo.symbio.store.dispatch.Dispatcher
-import io.vlingo.symbio.store.dispatch.DispatcherControl
+import io.vlingo.xoom.actors.testkit.AccessSafely
+import io.vlingo.xoom.symbio.Entry
+import io.vlingo.xoom.symbio.State
+import io.vlingo.xoom.symbio.store.Result
+import io.vlingo.xoom.symbio.store.dispatch.Dispatchable
+import io.vlingo.xoom.symbio.store.dispatch.Dispatcher
+import io.vlingo.xoom.symbio.store.dispatch.DispatcherControl
 
 class FakeStateStoreDispatcher : Dispatcher<Dispatchable<Entry<String>, State.TextState>> {
     private val states: MutableList<State.TextState> = mutableListOf()

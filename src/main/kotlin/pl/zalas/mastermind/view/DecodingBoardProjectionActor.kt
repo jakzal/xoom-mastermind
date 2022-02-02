@@ -1,9 +1,9 @@
 package pl.zalas.mastermind.view
 
-import io.vlingo.lattice.model.projection.Projectable
-import io.vlingo.lattice.model.projection.StateStoreProjectionActor
-import io.vlingo.symbio.Entry
-import io.vlingo.symbio.store.state.StateStore
+import io.vlingo.xoom.lattice.model.projection.Projectable
+import io.vlingo.xoom.lattice.model.projection.StateStoreProjectionActor
+import io.vlingo.xoom.symbio.Entry
+import io.vlingo.xoom.symbio.store.state.StateStore
 import pl.zalas.mastermind.model.Code.CodePeg
 import pl.zalas.mastermind.model.Feedback.KeyPeg
 import pl.zalas.mastermind.model.GameEvent

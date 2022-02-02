@@ -1,8 +1,8 @@
 package pl.zalas.mastermind.view
 
-import io.vlingo.actors.World
-import io.vlingo.common.Completes
-import io.vlingo.symbio.store.state.StateStore
+import io.vlingo.xoom.actors.World
+import io.vlingo.xoom.common.Completes
+import io.vlingo.xoom.symbio.store.state.StateStore
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -66,7 +66,7 @@ class DecodingBoardTests {
     @Test
     fun `game state is not found if the game has not been started`() {
         assertCompletesAs(
-            null,
+            DecodingBoard.NOT_FOUND,
             decodingBoardQuery().findDecodingBoardForGame(GameId.generate().toString())
         )
     }

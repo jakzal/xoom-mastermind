@@ -135,7 +135,6 @@ class ApplicationTests {
     }
 
     @Test
-    @Disabled
     fun `it returns a 404 if the decoding board is not found`() {
         Given {
             port(app.port)

@@ -1,6 +1,6 @@
 package pl.zalas.mastermind.infrastructure.address
 
-import io.vlingo.actors.Address
+import io.vlingo.xoom.actors.Address
 import pl.zalas.mastermind.model.GameId
 import java.util.*
 

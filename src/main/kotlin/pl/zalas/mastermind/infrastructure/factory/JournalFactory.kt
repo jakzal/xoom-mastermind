@@ -1,29 +1,29 @@
 package pl.zalas.mastermind.infrastructure.factory
 
-import io.vlingo.actors.Definition
-import io.vlingo.actors.Protocols
-import io.vlingo.actors.Stage
-import io.vlingo.lattice.model.DomainEvent
-import io.vlingo.lattice.model.projection.ProjectionDispatcher
-import io.vlingo.lattice.model.projection.TextProjectionDispatcherActor
-import io.vlingo.lattice.model.sourcing.Sourced
-import io.vlingo.lattice.model.sourcing.SourcedTypeRegistry
-import io.vlingo.symbio.Entry
-import io.vlingo.symbio.State
-import io.vlingo.symbio.store.DataFormat
-import io.vlingo.symbio.store.common.jdbc.Configuration
-import io.vlingo.symbio.store.common.jdbc.DatabaseType
-import io.vlingo.symbio.store.common.jdbc.postgres.PostgresConfigurationProvider
-import io.vlingo.symbio.store.dispatch.Dispatchable
-import io.vlingo.symbio.store.dispatch.Dispatcher
-import io.vlingo.symbio.store.dispatch.DispatcherControl
-import io.vlingo.symbio.store.dispatch.control.DispatcherControlActor
-import io.vlingo.symbio.store.journal.Journal
-import io.vlingo.symbio.store.journal.inmemory.InMemoryJournalActor
-import io.vlingo.symbio.store.journal.jdbc.JDBCDispatcherControlDelegate
-import io.vlingo.symbio.store.journal.jdbc.JDBCJournalActor
-import io.vlingo.symbio.store.journal.jdbc.JDBCJournalInstantWriter
-import io.vlingo.symbio.store.state.StateStore
+import io.vlingo.xoom.actors.Definition
+import io.vlingo.xoom.actors.Protocols
+import io.vlingo.xoom.actors.Stage
+import io.vlingo.xoom.lattice.model.DomainEvent
+import io.vlingo.xoom.lattice.model.projection.ProjectionDispatcher
+import io.vlingo.xoom.lattice.model.projection.TextProjectionDispatcherActor
+import io.vlingo.xoom.lattice.model.sourcing.Sourced
+import io.vlingo.xoom.lattice.model.sourcing.SourcedTypeRegistry
+import io.vlingo.xoom.symbio.Entry
+import io.vlingo.xoom.symbio.State
+import io.vlingo.xoom.symbio.store.DataFormat
+import io.vlingo.xoom.symbio.store.common.jdbc.Configuration
+import io.vlingo.xoom.symbio.store.common.jdbc.DatabaseType
+import io.vlingo.xoom.symbio.store.common.jdbc.postgres.PostgresConfigurationProvider
+import io.vlingo.xoom.symbio.store.dispatch.Dispatchable
+import io.vlingo.xoom.symbio.store.dispatch.Dispatcher
+import io.vlingo.xoom.symbio.store.dispatch.DispatcherControl
+import io.vlingo.xoom.symbio.store.dispatch.control.DispatcherControlActor
+import io.vlingo.xoom.symbio.store.journal.Journal
+import io.vlingo.xoom.symbio.store.journal.inmemory.InMemoryJournalActor
+import io.vlingo.xoom.symbio.store.journal.jdbc.JDBCDispatcherControlDelegate
+import io.vlingo.xoom.symbio.store.journal.jdbc.JDBCJournalActor
+import io.vlingo.xoom.symbio.store.journal.jdbc.JDBCJournalInstantWriter
+import io.vlingo.xoom.symbio.store.state.StateStore
 import pl.zalas.mastermind.infrastructure.factory.JournalFactory.JournalConfiguration.InMemoryConfiguration
 import pl.zalas.mastermind.infrastructure.factory.JournalFactory.JournalConfiguration.PostgreSQLConfiguration
 import pl.zalas.mastermind.model.GameEntity
@@ -59,16 +59,16 @@ class JournalFactory(private val stage: Stage, private val configuration: Journa
             Definition.has(TextProjectionDispatcherActor::class.java, listOf(descriptions))
         )
         val dispatchers =
-            Protocols.two<Dispatcher<Dispatchable<Entry<DomainEvent>, State.TextState>>, ProjectionDispatcher>(
+            Protocols.two<Dispatcher<Dispatchable<out Entry<*>, out State<*>>>, ProjectionDispatcher>(
                 dispatcherProtocols
             )
 
         return createJournal(dispatchers._1)
     }
 
-    fun createJournal(dispatcher: Dispatcher<Dispatchable<Entry<DomainEvent>, State.TextState>>): Journal<DomainEvent> {
+    fun createJournal(dispatcher: Dispatcher<Dispatchable<out Entry<*>, out State<*>>>): Journal<DomainEvent> {
         val journal = when (configuration) {
-            is InMemoryConfiguration -> Journal.using(stage, InMemoryJournalActor::class.java, dispatcher)
+            is InMemoryConfiguration -> Journal.using(stage, InMemoryJournalActor::class.java, listOf(dispatcher))
             is PostgreSQLConfiguration -> with(
                 Configuration(
                     DatabaseType.Postgres,
@@ -110,14 +110,18 @@ class JournalFactory(private val stage: Stage, private val configuration: Journa
     }
 
     private fun dispatcherControl(
-        dispatcher: Dispatcher<Dispatchable<Entry<DomainEvent>, State.TextState>>,
+        dispatcher: Dispatcher<Dispatchable<out Entry<*>, out State<*>>>,
         configuration: Configuration
     ) = stage.actorFor(
         DispatcherControl::class.java,
-        DispatcherControlActor::class.java,
-        listOf(dispatcher),
-        JDBCDispatcherControlDelegate(Configuration.cloneOf(configuration), stage.world().defaultLogger()),
-        StateStore.DefaultCheckConfirmationExpirationInterval,
-        StateStore.DefaultConfirmationExpiration
+        Definition.has(
+            DispatcherControlActor::class.java,
+            DispatcherControl.DispatcherControlInstantiator<Entry<*>, State<*>>(
+                listOf(dispatcher),
+                JDBCDispatcherControlDelegate(Configuration.cloneOf(configuration), stage.world().defaultLogger()),
+                StateStore.DefaultCheckConfirmationExpirationInterval,
+                StateStore.DefaultConfirmationExpiration
+            )
+        )
     )
 }

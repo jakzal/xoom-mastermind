@@ -1,12 +1,12 @@
 package pl.zalas.mastermind.infrastructure.http
 
-import io.vlingo.actors.World
-import io.vlingo.common.Completes
-import io.vlingo.http.resource.Configuration.Sizing
-import io.vlingo.http.resource.Configuration.Timing
-import io.vlingo.http.resource.Resources
-import io.vlingo.http.resource.Server
-import io.vlingo.symbio.store.dispatch.NoOpDispatcher
+import io.vlingo.xoom.actors.World
+import io.vlingo.xoom.common.Completes
+import io.vlingo.xoom.http.resource.Configuration.Sizing
+import io.vlingo.xoom.http.resource.Configuration.Timing
+import io.vlingo.xoom.http.resource.Resources
+import io.vlingo.xoom.http.resource.Server
+import io.vlingo.xoom.symbio.store.dispatch.NoOpDispatcher
 import pl.zalas.mastermind.infrastructure.factory.JournalFactory
 import pl.zalas.mastermind.infrastructure.factory.StateStoreFactory
 import pl.zalas.mastermind.model.RandomCodeMaker
