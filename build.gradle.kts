@@ -3,14 +3,19 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     application
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm")
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "pl.zalas"
-version = "1.0-SNAPSHOT"
+version = project.version
 java.sourceCompatibility = JavaVersion.VERSION_11
+
+val xoomVersion = "1.9.1"
+val junitVersion = "5.8.2"
+val restAssuredVersion = "4.5.0"
+val testcontainersVersion = "1.16.3"
 
 repositories {
     mavenCentral()
@@ -20,17 +25,17 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
-    implementation("io.vlingo.xoom:xoom-actors:1.9.1")
-    implementation("io.vlingo.xoom:xoom-lattice:1.9.1")
-    implementation("io.vlingo.xoom:xoom-symbio:1.9.1")
-    implementation("io.vlingo.xoom:xoom-symbio-jdbc:1.9.1")
-    implementation("io.vlingo.xoom:xoom-http:1.9.1")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
-    testImplementation("io.rest-assured:rest-assured:4.5.0")
-    testImplementation("io.rest-assured:kotlin-extensions:4.5.0")
-    testImplementation("org.testcontainers:testcontainers:1.16.3")
-    testImplementation("org.testcontainers:junit-jupiter:1.16.3")
-    testImplementation("org.testcontainers:postgresql:1.16.3")
+    implementation("io.vlingo.xoom:xoom-actors:$xoomVersion")
+    implementation("io.vlingo.xoom:xoom-lattice:$xoomVersion")
+    implementation("io.vlingo.xoom:xoom-symbio:$xoomVersion")
+    implementation("io.vlingo.xoom:xoom-symbio-jdbc:$xoomVersion")
+    implementation("io.vlingo.xoom:xoom-http:$xoomVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
+    testImplementation("io.rest-assured:rest-assured:$restAssuredVersion")
+    testImplementation("io.rest-assured:kotlin-extensions:$restAssuredVersion")
+    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
+    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
 }
 
 application {
