@@ -10,4 +10,9 @@ jobs:
       with:
         java-version: 11
     - name: Build & test
-      run: ./gradlew test asciidoctor
+      run: ./gradlew test asciidoctor shadowJar
+    - name: Publish artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: JAR
+        path: build/libs/mastermind-*.jar
