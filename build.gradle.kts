@@ -19,7 +19,6 @@ val testcontainersVersion = "1.16.3"
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
