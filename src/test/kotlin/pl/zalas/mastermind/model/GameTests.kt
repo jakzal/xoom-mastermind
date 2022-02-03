@@ -1,7 +1,11 @@
 package pl.zalas.mastermind.model
 
-import io.vlingo.actors.World
-import io.vlingo.common.Completes
+import io.vlingo.xoom.actors.World
+import io.vlingo.xoom.common.Completes
+import io.vlingo.xoom.symbio.Entry
+import io.vlingo.xoom.symbio.State
+import io.vlingo.xoom.symbio.store.dispatch.Dispatchable
+import io.vlingo.xoom.symbio.store.dispatch.Dispatcher
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -31,7 +35,8 @@ class GameTests {
     fun startWorld() {
         world = World.startWithDefaults("mastermind")
         dispatcher = FakeGameEventDispatcher()
-        JournalFactory(world.stage(), InMemoryConfiguration).createJournal(dispatcher)
+        @Suppress("UNCHECKED_CAST")
+        JournalFactory(world.stage(), InMemoryConfiguration).createJournal(dispatcher as Dispatcher<Dispatchable<out Entry<*>, out State<*>>>)
     }
 
     @AfterEach

@@ -1,12 +1,12 @@
 package pl.zalas.mastermind.model
 
-import io.vlingo.common.Completes
-import io.vlingo.common.Failure
-import io.vlingo.common.Outcome
-import io.vlingo.common.Success
-import io.vlingo.lattice.model.DomainEvent
-import io.vlingo.lattice.model.sourcing.EventSourced
-import io.vlingo.lattice.model.sourcing.EventSourced.registerConsumer
+import io.vlingo.xoom.common.Completes
+import io.vlingo.xoom.common.Failure
+import io.vlingo.xoom.common.Outcome
+import io.vlingo.xoom.common.Success
+import io.vlingo.xoom.lattice.model.DomainEvent
+import io.vlingo.xoom.lattice.model.sourcing.EventSourced
+import io.vlingo.xoom.lattice.model.sourcing.EventSourced.registerConsumer
 import pl.zalas.mastermind.model.GameError.GameFinished
 import pl.zalas.mastermind.model.GameError.IncompleteCode
 import pl.zalas.mastermind.model.GameEvent.GameStarted

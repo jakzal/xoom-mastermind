@@ -3,39 +3,42 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     application
-    kotlin("jvm") version "1.4.21"
-    id("org.asciidoctor.jvm.convert") version "3.3.0"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    kotlin("jvm")
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "pl.zalas"
-version = "1.0-SNAPSHOT"
+version = project.version
 java.sourceCompatibility = JavaVersion.VERSION_11
+
+val xoomVersion = "1.9.1"
+val junitVersion = "5.8.2"
+val restAssuredVersion = "4.5.0"
+val testcontainersVersion = "1.16.3"
 
 repositories {
     mavenCentral()
-    jcenter()
-    maven { url = uri("https://oss.jfrog.org/oss-snapshot-local") }
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
-    implementation("io.vlingo:vlingo-actors:1.3.0")
-    implementation("io.vlingo:vlingo-lattice:1.3.0")
-    implementation("io.vlingo:vlingo-symbio:1.3.0")
-    implementation("io.vlingo:vlingo-symbio-jdbc:1.3.0")
-    implementation("io.vlingo:vlingo-http:1.3.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
-    testImplementation("io.rest-assured:rest-assured:4.3.2")
-    testImplementation("io.rest-assured:kotlin-extensions:4.3.2")
-    testImplementation("org.testcontainers:testcontainers:1.15.0")
-    testImplementation("org.testcontainers:junit-jupiter:1.15.0")
-    testImplementation("org.testcontainers:postgresql:1.15.0")
+    implementation("io.vlingo.xoom:xoom-actors:$xoomVersion")
+    implementation("io.vlingo.xoom:xoom-lattice:$xoomVersion")
+    implementation("io.vlingo.xoom:xoom-symbio:$xoomVersion")
+    implementation("io.vlingo.xoom:xoom-symbio-jdbc:$xoomVersion")
+    implementation("io.vlingo.xoom:xoom-http:$xoomVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
+    testImplementation("io.rest-assured:rest-assured:$restAssuredVersion")
+    testImplementation("io.rest-assured:kotlin-extensions:$restAssuredVersion")
+    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
+    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
 }
 
 application {
-    mainClassName = "pl.zalas.mastermind.infrastructure.http.Application"
+    mainClass.set("pl.zalas.mastermind.infrastructure.http.Application")
 }
 
 tasks {

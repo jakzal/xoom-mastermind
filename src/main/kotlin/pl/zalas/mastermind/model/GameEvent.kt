@@ -1,6 +1,6 @@
 package pl.zalas.mastermind.model
 
-import io.vlingo.lattice.model.DomainEvent
+import io.vlingo.xoom.lattice.model.DomainEvent
 
 sealed class GameEvent : DomainEvent() {
     abstract val id: GameId
