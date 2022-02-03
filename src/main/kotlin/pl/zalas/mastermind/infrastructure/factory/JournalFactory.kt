@@ -24,6 +24,7 @@ import io.vlingo.xoom.symbio.store.journal.jdbc.JDBCDispatcherControlDelegate
 import io.vlingo.xoom.symbio.store.journal.jdbc.JDBCJournalActor
 import io.vlingo.xoom.symbio.store.journal.jdbc.JDBCJournalInstantWriter
 import io.vlingo.xoom.symbio.store.state.StateStore
+import org.postgresql.Driver
 import pl.zalas.mastermind.infrastructure.factory.JournalFactory.JournalConfiguration.InMemoryConfiguration
 import pl.zalas.mastermind.infrastructure.factory.JournalFactory.JournalConfiguration.PostgreSQLConfiguration
 import pl.zalas.mastermind.model.GameEntity
@@ -68,33 +69,8 @@ class JournalFactory(private val stage: Stage, private val configuration: Journa
 
     fun createJournal(dispatcher: Dispatcher<Dispatchable<out Entry<*>, out State<*>>>): Journal<DomainEvent> {
         val journal = when (configuration) {
-            is InMemoryConfiguration -> Journal.using(stage, InMemoryJournalActor::class.java, listOf(dispatcher))
-            is PostgreSQLConfiguration -> with(
-                Configuration(
-                    DatabaseType.Postgres,
-                    PostgresConfigurationProvider.interest,
-                    org.postgresql.Driver::class.java.name,
-                    DataFormat.Text,
-                    "jdbc:postgresql://${configuration.hostname}:${configuration.port}/",
-                    configuration.database,
-                    configuration.username,
-                    configuration.password,
-                    configuration.useSsl,
-                    "",
-                    true
-                )
-            ) {
-                stage.actorFor(
-                    Journal::class.java,
-                    JDBCJournalActor::class.java,
-                    this,
-                    JDBCJournalInstantWriter(
-                        this,
-                        listOf(dispatcher as Dispatcher<Dispatchable<Entry<String>, State.TextState>>),
-                        dispatcherControl(dispatcher, this)
-                    )
-                ) as Journal<DomainEvent>
-            }
+            is InMemoryConfiguration -> inMemory(dispatcher)
+            is PostgreSQLConfiguration -> postgreSQL(configuration, dispatcher)
         }
 
         val registry = SourcedTypeRegistry(stage.world())
@@ -108,6 +84,41 @@ class JournalFactory(private val stage: Stage, private val configuration: Journa
         )
         return journal
     }
+
+    private fun postgreSQL(
+        configuration: PostgreSQLConfiguration,
+        dispatcher: Dispatcher<Dispatchable<out Entry<*>, out State<*>>>
+    ): Journal<DomainEvent> =
+        with(
+            Configuration(
+                DatabaseType.Postgres,
+                PostgresConfigurationProvider.interest,
+                Driver::class.java.name,
+                DataFormat.Text,
+                "jdbc:postgresql://${configuration.hostname}:${configuration.port}/",
+                configuration.database,
+                configuration.username,
+                configuration.password,
+                configuration.useSsl,
+                "",
+                true
+            )
+        ) {
+            @Suppress("UNCHECKED_CAST")
+            stage.actorFor(
+                Journal::class.java,
+                JDBCJournalActor::class.java,
+                this,
+                JDBCJournalInstantWriter(
+                    this,
+                    listOf(dispatcher as Dispatcher<Dispatchable<Entry<String>, State.TextState>>),
+                    dispatcherControl(dispatcher, this)
+                )
+            ) as Journal<DomainEvent>
+        }
+
+    private fun inMemory(dispatcher: Dispatcher<Dispatchable<out Entry<*>, out State<*>>>): Journal<DomainEvent> =
+        Journal.using(stage, InMemoryJournalActor::class.java, listOf(dispatcher))
 
     private fun dispatcherControl(
         dispatcher: Dispatcher<Dispatchable<out Entry<*>, out State<*>>>,

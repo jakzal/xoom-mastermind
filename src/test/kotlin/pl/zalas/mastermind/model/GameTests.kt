@@ -35,6 +35,7 @@ class GameTests {
     fun startWorld() {
         world = World.startWithDefaults("mastermind")
         dispatcher = FakeGameEventDispatcher()
+        @Suppress("UNCHECKED_CAST")
         JournalFactory(world.stage(), InMemoryConfiguration).createJournal(dispatcher as Dispatcher<Dispatchable<out Entry<*>, out State<*>>>)
     }
 

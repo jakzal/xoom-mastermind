@@ -22,6 +22,7 @@ import io.vlingo.xoom.symbio.store.state.jdbc.JDBCEntriesInstantWriter
 import io.vlingo.xoom.symbio.store.state.jdbc.JDBCStateStoreActor
 import io.vlingo.xoom.symbio.store.state.jdbc.JDBCStorageDelegate
 import io.vlingo.xoom.symbio.store.state.jdbc.postgres.PostgresStorageDelegate
+import org.postgresql.Driver
 import pl.zalas.mastermind.infrastructure.factory.StateStoreFactory.StateStoreConfiguration.InMemoryConfiguration
 import pl.zalas.mastermind.infrastructure.factory.StateStoreFactory.StateStoreConfiguration.PostgreSQLConfiguration
 import pl.zalas.mastermind.view.DecodingBoard
@@ -47,38 +48,8 @@ class StateStoreFactory(
         StateTypeStateStoreMap.stateTypeToStoreName(DecodingBoard::class.java, DecodingBoard::class.simpleName);
 
         val store = when (configuration) {
-            is InMemoryConfiguration -> stage.actorFor(
-                StateStore::class.java,
-                InMemoryStateStoreActor::class.java,
-                listOf(dispatcher)
-            )
-            is PostgreSQLConfiguration -> with(
-                Configuration(
-                    DatabaseType.Postgres,
-                    PostgresConfigurationProvider.interest,
-                    org.postgresql.Driver::class.java.name,
-                    DataFormat.Text,
-                    "jdbc:postgresql://${configuration.hostname}:${configuration.port}/",
-                    configuration.database,
-                    configuration.username,
-                    configuration.password,
-                    configuration.useSsl,
-                    "",
-                    true
-                )
-            ) {
-                val postgresStorageDelegate = PostgresStorageDelegate(this, logger)
-                stage.actorFor(
-                    StateStore::class.java,
-                    JDBCStateStoreActor::class.java,
-                    postgresStorageDelegate,
-                    JDBCEntriesInstantWriter(
-                        postgresStorageDelegate as JDBCStorageDelegate<State.TextState>,
-                        listOf(dispatcher as Dispatcher<Dispatchable<out Entry<*>, out State<*>>>),
-                        dispatcherControl(dispatcher, this)
-                    )
-                )
-            }
+            is InMemoryConfiguration -> inMemory(dispatcher)
+            is PostgreSQLConfiguration -> postgreSQL(configuration, dispatcher)
         }
         val registry = StatefulTypeRegistry(stage.world())
         registry.register(
@@ -86,6 +57,45 @@ class StateStoreFactory(
         )
         return store
     }
+
+    private fun postgreSQL(
+        configuration: PostgreSQLConfiguration,
+        dispatcher: Dispatcher<*>
+    ): StateStore =
+        with(
+            Configuration(
+                DatabaseType.Postgres,
+                PostgresConfigurationProvider.interest,
+                Driver::class.java.name,
+                DataFormat.Text,
+                "jdbc:postgresql://${configuration.hostname}:${configuration.port}/",
+                configuration.database,
+                configuration.username,
+                configuration.password,
+                configuration.useSsl,
+                "",
+                true
+            )
+        ) {
+            val postgresStorageDelegate = PostgresStorageDelegate(this, logger)
+            @Suppress("UNCHECKED_CAST")
+            stage.actorFor(
+                StateStore::class.java,
+                JDBCStateStoreActor::class.java,
+                postgresStorageDelegate,
+                JDBCEntriesInstantWriter(
+                    postgresStorageDelegate as JDBCStorageDelegate<State.TextState>,
+                    listOf(dispatcher as Dispatcher<Dispatchable<out Entry<*>, out State<*>>>),
+                    dispatcherControl(dispatcher, this)
+                )
+            )
+        }
+
+    private fun inMemory(dispatcher: Dispatcher<*>) = stage.actorFor(
+        StateStore::class.java,
+        InMemoryStateStoreActor::class.java,
+        listOf(dispatcher)
+    )
 
     private fun dispatcherControl(
         dispatcher: Dispatcher<Dispatchable<out Entry<*>, out State<*>>>,
