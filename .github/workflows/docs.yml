@@ -16,7 +16,7 @@ jobs:
       - name: Build documentation
         run: ./gradlew asciidoctor
       - name: Publish documentation
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+        uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
           BRANCH: gh-pages
           FOLDER: build/docs
