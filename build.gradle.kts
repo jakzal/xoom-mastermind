@@ -14,7 +14,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 val xoomVersion = "1.10.1"
 val junitVersion = "5.9.1"
-val restAssuredVersion = "4.5.0"
+val restAssuredVersion = "5.2.0"
 val testcontainersVersion = "1.16.3"
 
 repositories {
