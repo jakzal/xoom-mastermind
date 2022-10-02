@@ -12,7 +12,7 @@ group = "pl.zalas"
 version = project.version
 java.sourceCompatibility = JavaVersion.VERSION_11
 
-val xoomVersion = "1.9.1"
+val xoomVersion = "1.10.1"
 val junitVersion = "5.8.2"
 val restAssuredVersion = "4.5.0"
 val testcontainersVersion = "1.16.3"
