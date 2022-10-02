@@ -10,7 +10,7 @@ plugins {
 
 group = "pl.zalas"
 version = project.version
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 val xoomVersion = "1.10.1"
 val junitVersion = "5.9.1"
@@ -43,10 +43,10 @@ application {
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "17"
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "17"
     }
     shadowJar {
         archiveClassifier.set("")
