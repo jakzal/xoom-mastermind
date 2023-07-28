@@ -2,4 +2,4 @@
 
 Code-breaking game.
 
-Documentation: [https://jakzal.github.io/xoom-kotlin/](https://jakzal.github.io/xoom-mastermind/)
+Documentation: [https://jakzal.github.io/xoom-mastermind/](https://jakzal.github.io/xoom-mastermind/)
